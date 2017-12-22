@@ -32,13 +32,15 @@ export SKYFLOW_GITHUB_URL='franckdiomande/docker/blob/equimetre'
 gitHubUserContent='https://raw.githubusercontent.com'
 
 function init(){
+
+    # Create skyflow directory for current user
 	if [ ! -d $SKYFLOW_DIR ]; then
     	mkdir $SKYFLOW_DIR
-    	mkdir $SKYFLOW_DIR/$SKYFLOW_VERSION
 	fi
 
-	if [ ! -d $SKYFLOW_DIR/$SKYFLOW_VERSION ]; then
-        mkdir $SKYFLOW_DIR/$SKYFLOW_VERSION
+    # Install documentation for basic commands
+	if [ ! -f $SKYFLOW_DIR'/skyflow-doc.ini' ]; then
+        curl --silent -o "$SKYFLOW_DIR/skyflow-doc.ini" "$gitHubUserContent/$SKYFLOW_GITHUB_URL/skyflow-doc.ini"
 	fi
 }
 
@@ -46,10 +48,10 @@ init
 
 
 function install(){
-	curl --silent -o "$SKYFLOW_DIR/$SKYFLOW_VERSION/skyflow-$1.sh" "$gitHubUserContent/$SKYFLOW_GITHUB_URL/$1.sh"
+	curl --silent -o "$SKYFLOW_DIR/skyflow-$1.sh" "$gitHubUserContent/$SKYFLOW_GITHUB_URL/$1.sh"
 }
 
-install 'docker-entrypoint'
+#install 'docker-entrypoint'
 
 
 

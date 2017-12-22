@@ -1,0 +1,13 @@
+{{ CONTAINER_NAME }}:
+    container_name: {{ CONTAINER_NAME }}
+    image: node:alpine
+    user: {{ USER }}
+    working_dir: /home/{{ USER }}/app
+    restart: always
+    volumes:
+        - {{ APPLICATION_DIR }}:/home/{{ USER }}/app
+    environment:
+        NODE_ENV: {{ ENV }}
+    expose:
+        - {{ PORT }}
+    command: 'npm start'

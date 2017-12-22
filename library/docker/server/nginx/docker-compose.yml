@@ -1,0 +1,13 @@
+version: "2"
+
+services:
+
+    {{ CONTAINER_NAME }}:
+        container_name: {{ CONTAINER_NAME }}
+        build: ./
+        ports:
+            - {{ CONTAINER_PORT }}:80
+        volumes:
+            - {{ APPLICATION_DIR }}:/var/www/{{ APPLICATION_NAME }}
+            - ./conf/{{ SERVER_TYPE }}:/etc/{{ SERVER_TYPE }}
+            - ./conf/php{{ PHP_VERSION }}:/etc/php{{ PHP_VERSION }}
