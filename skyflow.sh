@@ -25,31 +25,53 @@
 #read -a names
 #echo "Names : ${names[0]}, ${names[1]}"
 
-export SKYFLOW_DIR=$HOME'/.skyflow'
+export SKYFLOW_DIR=$HOME/'.skyflow'
+export SKYFLOW_CACHE_DIR=$SKYFLOW_DIR/'cache'
 export SKYFLOW_VERSION='1.0.0'
-export SKYFLOW_GITHUB_URL='franckdiomande/docker/blob/equimetre'
+export SKYFLOW_GITHUB_URL='https://github.com/franckdiomande/Skyflow-cli.git'
 
-gitHubUserContent='https://raw.githubusercontent.com'
-
-function init(){
-
-    # Create skyflow directory for current user
-	if [ ! -d $SKYFLOW_DIR ]; then
-    	mkdir $SKYFLOW_DIR
-	fi
-
-    # Install documentation for basic commands
-	if [ ! -f $SKYFLOW_DIR'/skyflow-doc.ini' ]; then
-        curl --silent -o "$SKYFLOW_DIR/skyflow-doc.ini" "$gitHubUserContent/$SKYFLOW_GITHUB_URL/skyflow-doc.ini"
-	fi
+function printError(){
+    echo -e '\033[0;31m Skyflow error: '$1' \033[0m'
 }
 
-init
+function printSuccess(){
+    echo -e '\033[0;92m ✓ '$1' \033[0m'
+}
 
+function clone(){
+    if [ ! -d $SKYFLOW_CACHE_DIR ]; then
+    	git clone $SKYFLOW_GITHUB_URL $SKYFLOW_CACHE_DIR
+	fi
+}
 
 function install(){
-	curl --silent -o "$SKYFLOW_DIR/skyflow-$1.sh" "$gitHubUserContent/$SKYFLOW_GITHUB_URL/$1.sh"
+
+    componentDir=$SKYFLOW_CACHE_DIR/'component/'$1
+
+    if [ ! -d $componentDir ]; then
+    	printError $1' component not found!'
+    	exit 1
+	fi
+
+    printSuccess $1' component was successfully installed!'
+    exit 0
 }
+
+# Create skyflow directory for current user
+if [ ! -d $SKYFLOW_DIR ]; then
+    mkdir $SKYFLOW_DIR
+fi
+
+clone
+
+case $1 in
+        "install")
+            install $2
+            ;;
+        *)
+            echo "J'te connais pas, ouste !"
+            ;;
+esac
 
 #install 'docker-entrypoint'
 
