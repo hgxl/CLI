@@ -27,8 +27,8 @@
 #read -a names
 #echo "Names : ${names[0]}, ${names[1]}"
 
-export SKYFLOW_DIR=$HOME/".skyflow"
-export SKYFLOW_CACHE_DIR=$SKYFLOW_DIR/"cache"
+export SKYFLOW_DIR=$HOME/.skyflow
+export SKYFLOW_CACHE_DIR=$SKYFLOW_DIR/cache
 export SKYFLOW_VERSION="1.0.0"
 export SKYFLOW_GITHUB_URL="https://github.com/franckdiomande/Skyflow-cli.git"
 
@@ -68,6 +68,7 @@ function init()
 
     if [ ! -d $SKYFLOW_CACHE_DIR ]; then
     	git clone $SKYFLOW_GITHUB_URL $SKYFLOW_CACHE_DIR
+    	rm -rf $SKYFLOW_CACHE_DIR/.git
 	fi
 
 	cp $SKYFLOW_CACHE_DIR/skyflow.ini $SKYFLOW_DIR/skyflow.ini
@@ -159,6 +160,9 @@ case $1 in
         remove $2
     ;;
     "init")
+        init "-f"
+    ;;
+    "update")
         init "-f"
     ;;
     "-h")
