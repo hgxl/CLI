@@ -22,7 +22,7 @@ author="Skyflow Team - Franck Diomandé <fkdiomande@gmail.com>"
 versionMessage="Skyflow CLI version $SKYFLOW_VERSION"
 docFile="$SKYFLOW_DIR/skyflow.ini"
 
-function init()
+function skyflowInit()
 {
     # Create skyflow directory for current user
     if [ ! -d $SKYFLOW_DIR ]; then
@@ -51,7 +51,7 @@ function init()
 	sudo chmod +x $SKYFLOW_DIR/helper.sh
 }
 
-function install()
+function skyflowInstall()
 {
     componentCacheDir=$SKYFLOW_CACHE_DIR/component/$1
 
@@ -77,7 +77,7 @@ function install()
     ./helper.sh "printSuccess" "$1 component was successfully installed!"
 }
 
-function remove()
+function skyflowRemove()
 {
     componentCacheDir=$SKYFLOW_CACHE_DIR/component/$1
 
@@ -98,17 +98,17 @@ function remove()
     ./helper.sh "printSuccess" "$1 component was successfully removed!"
 }
 
-init
+skyflowInit
 
 case $1 in
     "install")
-        install "$2"
+        skyflowInstall "$2"
     ;;
     "remove")
-        remove "$2"
+        skyflowRemove "$2"
     ;;
     "init"|"update")
-        init "-f"
+        skyflowInit "-f"
     ;;
     "-h"|"--help")
         ./helper.sh "-h" "Skyflow CLI" "$author" $docFile

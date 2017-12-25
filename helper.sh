@@ -1,17 +1,17 @@
 #! /bin/sh
 ##! /bin/bash
 
-function printError()
+function skyflowPrintError()
 {
     echo -e "\033[0;31mSkyflow error: "$1" \033[0m"
 }
 
-function printSuccess()
+function skyflowPrintSuccess()
 {
     echo -e "\033[0;92m✓ "$1" \033[0m"
 }
 
-function printInfo()
+function skyflowPrintInfo()
 {
     echo -e "\033[0;94m"$1" \033[0m"
 }
@@ -21,7 +21,7 @@ function printInfo()
 # - $1 : Title
 # - $2 : Author
 # - $3 : File to use (doc.ini)
-function help()
+function skyflowHelp()
 {
     echo
     echo -e "\033[0;96m$1\033[0m\033[0;37m - $2\033[0m"
@@ -48,7 +48,7 @@ function help()
 # Arguments:
 # - $1 : Title
 # - $2 : Author
-function version()
+function skyflowVersion()
 {
     echo -e "\033[0;96m$1\033[0m"
     echo -e "\033[0;37m$2\033[0m"
@@ -57,39 +57,37 @@ function version()
 # Run command
 # Arguments:
 # - $1 : Command
-function runCommand()
+function skyflowRunCommand()
 {
     sudo $1
 
-    result=$?
-
     if [ $? -eq 0 ]; then
-        printSuccess "$command"
+        skyflowPrintSuccess "$1"
         exit 0
     else
-        printError "$command command failed"
-        exit $result
+        skyflowPrintError "'$1' command failed"
+        exit $?
     fi
 }
 
 case $1 in
     "-h")
-        help "$2" "$3" "$4"
+        skyflowHelp "$2" "$3" "$4"
     ;;
     "-v")
-        version "$2" "$3"
+        skyflowVersion "$2" "$3"
     ;;
     "printError")
-        printError "$2"
+        skyflowPrintError "$2"
     ;;
     "printSuccess")
-        printSuccess "$2"
+        skyflowPrintSuccess "$2"
     ;;
     "printInfo")
-        printInfo "$2"
+        skyflowPrintInfo "$2"
     ;;
     "runCommand")
-        runCommand "$2"
+        skyflowRunCommand "$2"
     ;;
 esac
 

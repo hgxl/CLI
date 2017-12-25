@@ -7,7 +7,7 @@ author="Skyflow Team - Franck Diomandé <fkdiomande@gmail.com>"
 versionMessage="Skyflow Docker CLI version $SKYFLOW_DOCKER_VERSION"
 docFile="$SKYFLOW_DIR/component/docker/doc.ini"
 
-function init()
+function skyflowDockerInit()
 {
     CWD=$PWD
     cd $CWD
@@ -99,7 +99,8 @@ function init()
         sed -i "s/{{ *$key *}}/$newValue/g" docker/docker-compose.yml
     done 3< docker/docker.ini
 
-
+    echo -e "\033[0;92mYour docker environment is ready! Run 'skyflow-docker up' command to up your environment.\033[0m"
+    exit 0
 }
 
 function findDockerComposeFile()
@@ -115,24 +116,49 @@ function findDockerComposeFile()
     fi
 }
 
-function up()
+function skyflowRunCommand()
+{
+#    sudo $1
+#
+#    if [ $? -eq 0 ]; then
+#        $SKYFLOW_DIR/helper.sh "printSuccess" "$1"
+#        exit 0
+#    else
+#        $SKYFLOW_DIR/helper.sh "printError" "'$1' command failed"
+#        exit $?
+#    fi
+    $SKYFLOW_DIR/helper.sh "runCommand" "$1"
+}
+
+function skyflowDockerUp()
 {
     findDockerComposeFile
 
-    ./helper.sh "runCommand" "docker-compose up --build -d"
+    skyflowRunCommand "docker-compose up --build -d"
 }
 
-function ps()
+function skyflowDockerLs()
 {
-    findDockerComposeFile
-
-    $SKYFLOW_DIR/helper.sh "runCommand" "docker-compose up --build -d"
+    # Trim : Remove last 's' char
+    shopt -s extglob
+    input=$1
+    # input="${input##*(s)}" => Trim leading 's' char
+    input="${input%%*(s)}"
+    shopt -u extglob
+    skyflowRunCommand "docker $input ls -a"
 }
 
-
-
-
-
+function skyflowDockerRm()
+{
+    # Trim : Remove last 's' char
+    shopt -s extglob
+    input=$1
+    # input="${input##*(s)}" => Trim leading 's' char
+    input="${input%%*(s)}"
+    shopt -u extglob
+#    'docker ' . $w . ' rm $(docker ' . $w . ' ls -a -q) -f'
+    skyflowRunCommand "docker $input rm $(docker $input ls -a -q) -f"
+}
 
 
 case $1 in
@@ -143,13 +169,20 @@ case $1 in
         $SKYFLOW_DIR/helper.sh "-v" "$versionMessage" "$author"
     ;;
     "init"|"create")
-        init "$2"
+        skyflowDockerInit "$2"
     ;;
     "up")
-        up
+        skyflowDockerUp
+    ;;
+    "ls")
+        skyflowDockerLs "$2"
+    ;;
+    "rm")
+        skyflowDockerRm "$2"
     ;;
     *)
-        $SKYFLOW_DIR/helper.sh "-h" "Skyflow Docker CLI" "$author" $docFile
+        findDockerComposeFile
+        skyflowRunCommand "docker-compose $1"
     ;;
 esac
 
