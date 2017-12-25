@@ -1,18 +1,4 @@
 #! /bin/sh
-##! /bin/bash
-
-#echo "Hello world !"
-
-# Variables
-
-#echo $BASH
-#echo $BASH_VERSION
-#echo $HOME
-#echo $PWD
-
-#name='Franck'
-
-#echo "$name"
 
 # Input
 
@@ -121,26 +107,17 @@ case $1 in
     "remove")
         remove "$2"
     ;;
-    "init")
+    "init"|"update")
         init "-f"
     ;;
-    "update")
-        init "-f"
-    ;;
-    "-h")
+    "-h"|"--help")
         ./helper.sh "-h" "Skyflow CLI" "$author" $docFile
     ;;
-    "--help")
-        ./helper.sh "-h" "Skyflow CLI" "$author" $docFile
-    ;;
-    "-v")
-        ./helper.sh "-v" "$versionMessage" "$author"
-    ;;
-    "--version")
+    "-v"|"--version")
         ./helper.sh "-v" "$versionMessage" "$author"
     ;;
     *)
-        help
+        ./helper.sh "-h" "Skyflow CLI" "$author" $docFile
     ;;
 esac
 

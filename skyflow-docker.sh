@@ -9,9 +9,10 @@ docFile="$SKYFLOW_DIR/component/docker/doc.ini"
 
 function init()
 {
-    cd $PWD
+    CWD=$PWD
+    cd $CWD
     if [ -d docker ] && test -z $1; then
-    	./helper.sh "printError" "docker directory already exists. Use -f option to continue."
+    	$SKYFLOW_DIR/helper.sh "printError" "docker directory already exists. Use -f option to continue."
     	exit 1
 	fi
 	if [ -d docker ]; then
@@ -30,12 +31,12 @@ function init()
              break
           ;;
           *)
-            ./helper.sh "printError" "Invalid selection"
+            $SKYFLOW_DIR/helper.sh "printError" "Invalid selection"
           ;;
         esac
     done
 
-    cd $PWD
+    cd $CWD
     # Copy docker.ini
     cp $SKYFLOW_DIR/component/docker/server/$server/docker.ini docker/docker.ini
 
@@ -45,8 +46,17 @@ function init()
     do
         case $php in
           5|7)
-            cp -R $SKYFLOW_DIR/component/docker/conf/php$php docker/conf/php$php
-            cp -R $SKYFLOW_DIR/component/docker/extra/php$php docker/extra/php$php
+
+            if [ -d $SKYFLOW_DIR/component/docker/conf/php$php docker/conf/php$php ]; then
+    	        cp -R $SKYFLOW_DIR/component/docker/conf/php$php docker/conf/php$php
+    	        rm $SKYFLOW_DIR/component/docker/conf/php$php docker/conf/php$php/conf.d/.gitignore
+	        fi
+
+            if [ -d $SKYFLOW_DIR/component/docker/extra/php$php docker/extra/php$php ]; then
+    	        cp -R $SKYFLOW_DIR/component/docker/extra/php$php docker/extra/php$php
+            rm docker/extra/php$php/modules/.gitignore
+	        fi
+
             # Set server configuration according to php version
             if [ -d $SKYFLOW_DIR/component/docker/conf/$server/php$php ]; then
     	        cp -R $SKYFLOW_DIR/component/docker/conf/$server/php$php docker/conf/$server
@@ -64,7 +74,7 @@ function init()
             break
           ;;
           *)
-            ./helper.sh "printError" "Invalid selection"
+            $SKYFLOW_DIR/helper.sh "printError" "Invalid selection"
           ;;
         esac
     done
@@ -102,16 +112,16 @@ function init()
 
 case $1 in
     "-h"|"--help")
-        ./helper.sh "-h" "Skyflow Docker CLI" "$author" $docFile
+        $SKYFLOW_DIR/helper.sh "-h" "Skyflow Docker CLI" "$author" $docFile
     ;;
     "-v"|"--version")
-        ./helper.sh "-v" "$versionMessage" "$author"
+        $SKYFLOW_DIR/helper.sh "-v" "$versionMessage" "$author"
     ;;
     "init"|"create")
         init "$2"
     ;;
     *)
-        ./helper.sh "-h" "Skyflow Docker CLI" "$author" $docFile
+        $SKYFLOW_DIR/helper.sh "-h" "Skyflow Docker CLI" "$author" $docFile
     ;;
 esac
 
