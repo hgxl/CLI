@@ -10,5 +10,3 @@ services:
         volumes:
             - ..:/var/www/{{ application.name }}
             - ./conf/{{ server.type }}:/etc/{{ server.type }}
-            - ./conf/php{{ php.version }}:/etc/php{{ php.version }}
-            - ./extra/php{{ php.version }}:/usr/lib/php{{ php.version }}

@@ -32,20 +32,9 @@ export SKYFLOW_CACHE_DIR=$SKYFLOW_DIR/cache
 export SKYFLOW_VERSION="1.0.0"
 export SKYFLOW_GITHUB_URL="https://github.com/franckdiomande/Skyflow-cli.git"
 
-function printError()
-{
-    echo -e "\033[0;31mSkyflow error: "$1" \033[0m"
-}
-
-function printSuccess()
-{
-    echo -e "\033[0;92m✓"$1" \033[0m"
-}
-
-function printInfo()
-{
-    echo -e "\033[0;94m"$1" \033[0m"
-}
+author="Skyflow Team - Franck Diomandé <fkdiomande@gmail.com>"
+versionMessage="Skyflow CLI version $SKYFLOW_VERSION"
+docFile="$SKYFLOW_DIR/skyflow.ini"
 
 function init()
 {
@@ -72,35 +61,8 @@ function init()
 	fi
 
 	cp $SKYFLOW_CACHE_DIR/skyflow.ini $SKYFLOW_DIR/skyflow.ini
-}
-
-function help()
-{
-    echo
-    echo -e "\033[0;96mSkyflow CLI\033[0m\033[0;37m - Franck Diomandé <fkdiomande@gmail.com>\033[0m"
-
-    start=1
-    end=100
-    for ((i=$start; i<=$end; i++)); do echo -n -e "\033[0;96m-\033[0m"; done
-
-    echo
-
-    while IFS== read command desc
-    do
-        len=${#command}
-        echo -n -e "\033[0;35m$command\033[0m"
-        for ((i=1; i<=20-$len; i++)); do echo -n " "; done
-        echo -n -e "\033[0;30m$desc\033[0m"
-        echo
-    done < $SKYFLOW_DIR/skyflow.ini
-
-    echo
-}
-
-function version()
-{
-    echo -e "\033[0;96mSkyflow CLI version $SKYFLOW_VERSION\033[0m"
-    echo -e "\033[0;37mSkyflow Team - Franck Diomandé <fkdiomande@gmail.com>\033[0m"
+	cp $SKYFLOW_CACHE_DIR/helper.sh $SKYFLOW_DIR/helper.sh
+	sudo chmod +x $SKYFLOW_DIR/helper.sh
 }
 
 function install()
@@ -109,13 +71,13 @@ function install()
 
     # Check if component exists
     if [ ! -d $componentCacheDir ] || test -z $1; then
-    	printError $1" component not found"
+    	./helper.sh "printError" "$1 component not found"
     	exit 1
 	fi
 
 	# Exit if component already exists
     if [ -d $SKYFLOW_DIR/component/$1 ] && [ -f /usr/bin/skyflow-$1 ]; then
-    	printInfo $1" component is already installed"
+    	./helper.sh "printInfo" "$1 component is already installed"
     	exit 0
 	fi
 
@@ -126,7 +88,7 @@ function install()
     sudo cp $SKYFLOW_CACHE_DIR/bin/skyflow-$1.sh /usr/bin/skyflow-$1
     sudo chmod +x /usr/bin/skyflow-$1
 
-    printSuccess $1" component was successfully installed!"
+    ./helper.sh "printSuccess" "$1 component was successfully installed!"
 }
 
 function remove()
@@ -135,7 +97,7 @@ function remove()
 
     # Check if component exists
     if [ ! -d $componentCacheDir ] || test -z $1; then
-    	printError $1" component not found"
+    	./helper.sh "printError" "$1 component not found"
     	exit 1
 	fi
 
@@ -147,17 +109,17 @@ function remove()
     	sudo rm /usr/bin/skyflow-$1
 	fi
 
-    printSuccess $1" component was successfully removed!"
+    ./helper.sh "printSuccess" "$1 component was successfully removed!"
 }
 
 init
 
 case $1 in
     "install")
-        install $2
+        install "$2"
     ;;
     "remove")
-        remove $2
+        remove "$2"
     ;;
     "init")
         init "-f"
@@ -166,16 +128,16 @@ case $1 in
         init "-f"
     ;;
     "-h")
-        help
+        ./helper.sh "-h" "Skyflow CLI" "$author" $docFile
     ;;
     "--help")
-        help
+        ./helper.sh "-h" "Skyflow CLI" "$author" $docFile
     ;;
     "-v")
-        version
+        ./helper.sh "-v" "$versionMessage" "$author"
     ;;
     "--version")
-        version
+        ./helper.sh "-v" "$versionMessage" "$author"
     ;;
     *)
         help
