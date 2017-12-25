@@ -54,6 +54,24 @@ function version()
     echo -e "\033[0;37m$2\033[0m"
 }
 
+# Run command
+# Arguments:
+# - $1 : Command
+function runCommand()
+{
+    sudo $1
+
+    result=$?
+
+    if [ $? -eq 0 ]; then
+        printSuccess "$command"
+        exit 0
+    else
+        printError "$command command failed"
+        exit $result
+    fi
+}
+
 case $1 in
     "-h")
         help "$2" "$3" "$4"
@@ -69,6 +87,9 @@ case $1 in
     ;;
     "printInfo")
         printInfo "$2"
+    ;;
+    "runCommand")
+        runCommand "$2"
     ;;
 esac
 

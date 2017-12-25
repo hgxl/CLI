@@ -47,14 +47,14 @@ function init()
         case $php in
           5|7)
 
-            if [ -d $SKYFLOW_DIR/component/docker/conf/php$php docker/conf/php$php ]; then
+            if [ -d $SKYFLOW_DIR/component/docker/conf/php$php ]; then
     	        cp -R $SKYFLOW_DIR/component/docker/conf/php$php docker/conf/php$php
-    	        rm $SKYFLOW_DIR/component/docker/conf/php$php docker/conf/php$php/conf.d/.gitignore
+    	        rm docker/conf/php$php/conf.d/.gitignore
 	        fi
 
-            if [ -d $SKYFLOW_DIR/component/docker/extra/php$php docker/extra/php$php ]; then
+            if [ -d $SKYFLOW_DIR/component/docker/extra/php$php ]; then
     	        cp -R $SKYFLOW_DIR/component/docker/extra/php$php docker/extra/php$php
-            rm docker/extra/php$php/modules/.gitignore
+                rm docker/extra/php$php/modules/.gitignore
 	        fi
 
             # Set server configuration according to php version
@@ -92,6 +92,8 @@ function init()
 #        if test -z $newValue; then
 #    	    $newValue=$value
 #	    fi
+
+        # Todo: Create new group and add current user and apache
         sed -i "s/$key *= *$value/$key = $newValue/g" docker/docker.ini
         sed -i "s/{{ *$key *}}/$newValue/g" docker/Dockerfile
         sed -i "s/{{ *$key *}}/$newValue/g" docker/docker-compose.yml
@@ -100,9 +102,32 @@ function init()
 
 }
 
+function findDockerComposeFile()
+{
+    cd $PWD
+    if [ -d docker ] && [ ! -f docker-compose.yml ]; then
+        cd docker
+    fi
 
+    if [ ! -f docker-compose.yml ]; then
+        $SKYFLOW_DIR/helper.sh "printError" "docker-compose.yml file not found."
+        exit 1
+    fi
+}
 
+function up()
+{
+    findDockerComposeFile
 
+    ./helper.sh "runCommand" "docker-compose up --build -d"
+}
+
+function ps()
+{
+    findDockerComposeFile
+
+    $SKYFLOW_DIR/helper.sh "runCommand" "docker-compose up --build -d"
+}
 
 
 
@@ -119,6 +144,9 @@ case $1 in
     ;;
     "init"|"create")
         init "$2"
+    ;;
+    "up")
+        up
     ;;
     *)
         $SKYFLOW_DIR/helper.sh "-h" "Skyflow Docker CLI" "$author" $docFile
