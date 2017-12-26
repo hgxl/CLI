@@ -16,6 +16,17 @@ function skyflowPrintInfo()
     echo -e "\033[0;94m"$1" \033[0m"
 }
 
+function skyflowTrim()
+{
+    string="$1"
+    chars="$2"
+    shopt -s extglob
+    string="${string##*($chars)}"
+    string="${string%%*($chars)}"
+    shopt -u extglob
+    echo $string
+}
+
 # Display help for command
 # Arguments:
 # - $1 : Title
@@ -34,6 +45,17 @@ function skyflowHelp()
 
     while IFS== read command desc
     do
+        command=$(skyflowTrim $command " ")
+        desc=$(skyflowTrim $desc " ")
+
+        # First char
+        firstchar=${command:0:1}
+
+        if [ "$firstchar" == "[" ] || [ "$firstchar" == ";" ]; then
+            continue
+        fi
+
+        # Length
         len=${#command}
         echo -n -e "\033[0;35m$command\033[0m"
         for ((i=1; i<=20-$len; i++)); do echo -n " "; done
@@ -70,6 +92,20 @@ function skyflowRunCommand()
     fi
 }
 
+function findDockerComposeFile()
+{
+    CWD=$PWD; cd $PWD
+
+    if [ -d docker ] && [ ! -f docker-compose.yml ]; then
+        cd docker
+    fi
+
+    if [ ! -f docker-compose.yml ]; then
+        skyflowPrintError "docker-compose.yml file not found."
+        exit 1
+    fi
+}
+
 case $1 in
     "-h")
         skyflowHelp "$2" "$3" "$4"
@@ -86,8 +122,14 @@ case $1 in
     "printInfo")
         skyflowPrintInfo "$2"
     ;;
+    "trim")
+        skyflowTrim "$2" "$3"
+    ;;
     "runCommand")
         skyflowRunCommand "$2"
+    ;;
+    "findComposeFile")
+        findDockerComposeFile
     ;;
 esac
 

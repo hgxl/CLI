@@ -1,11 +1,11 @@
-{{ CONTAINER_NAME }}:
-    container_name: {{ CONTAINER_NAME }}
-    image: phpmyadmin/phpmyadmin
-    restart: always
-    environment:
-      - PMA_USER={{ USER }}
-      - PMA_PASSWORD={{ PASSWORD }}
-    ports:
-        - {{ PORT }}:80
-    links:
-      - {{ DATABASE_CONTAINER_NAME }}:db
+    {{ container.name }}:
+        container_name: {{ container.name }}
+        image: phpmyadmin/phpmyadmin
+        restart: always
+        environment:
+          - PMA_USER={{ user }}
+          - PMA_PASSWORD={{ password }}
+        ports:
+            - {{ port }}:80
+        links:
+            -{{ database.container.name }}:db

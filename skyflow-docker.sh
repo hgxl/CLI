@@ -7,10 +7,14 @@ author="Skyflow Team - Franck Diomandé <fkdiomande@gmail.com>"
 versionMessage="Skyflow Docker CLI version $SKYFLOW_DOCKER_VERSION"
 docFile="$SKYFLOW_DIR/component/docker/doc.ini"
 
+CWD=$PWD
+
+$SKYFLOW_DIR/helper.sh "findComposeFile"
+
 function skyflowDockerInit()
 {
-    CWD=$PWD
     cd $CWD
+    
     if [ -d docker ] && test -z $1; then
     	$SKYFLOW_DIR/helper.sh "printError" "docker directory already exists. Use -f option to continue."
     	exit 1
@@ -19,14 +23,16 @@ function skyflowDockerInit()
     	rm -rf docker
 	fi
 
-    mkdir docker docker/conf docker/extra docker/compose
+    mkdir docker docker/conf docker/extra
 
-    # Select server type
-    cd $SKYFLOW_DIR/component/docker/server
-    export PS3="Select your server : "
-    select server in *
+    containerDir=$SKYFLOW_DIR/component/docker/container
+
+    # Select container type
+    cd $containerDir
+    export PS3="Select your container : "
+    select container in *
     do
-        case $server in
+        case $container in
           apache2|nginx)
              break
           ;;
@@ -38,101 +44,60 @@ function skyflowDockerInit()
 
     cd $CWD
     # Copy docker.ini
-    cp $SKYFLOW_DIR/component/docker/server/$server/docker.ini docker/docker.ini
+#    cp $containerDir/$container/$container.ini docker/docker.ini
 
-     # Select php version
-    export PS3="Select your php version : "
-    select php in 5 7 none
-    do
-        case $php in
-          5|7)
-
-            if [ -d $SKYFLOW_DIR/component/docker/conf/php$php ]; then
-    	        cp -R $SKYFLOW_DIR/component/docker/conf/php$php docker/conf/php$php
-    	        rm docker/conf/php$php/conf.d/.gitignore
-	        fi
-
-            if [ -d $SKYFLOW_DIR/component/docker/extra/php$php ]; then
-    	        cp -R $SKYFLOW_DIR/component/docker/extra/php$php docker/extra/php$php
-                rm docker/extra/php$php/modules/.gitignore
-	        fi
-
-            # Set server configuration according to php version
-            if [ -d $SKYFLOW_DIR/component/docker/conf/$server/php$php ]; then
-    	        cp -R $SKYFLOW_DIR/component/docker/conf/$server/php$php docker/conf/$server
-	        fi
-            if [ -d $SKYFLOW_DIR/component/docker/server/$server/php ]; then
-    	        cp $SKYFLOW_DIR/component/docker/server/$server/php/Dockerfile docker/Dockerfile
-                cp $SKYFLOW_DIR/component/docker/server/$server/php/docker-compose.yml docker/docker-compose.yml
-	        fi
-            break
-          ;;
-          none)
-            cp -R $SKYFLOW_DIR/component/docker/conf/$server/default docker/conf/$server
-            cp $SKYFLOW_DIR/component/docker/server/$server/default/Dockerfile docker/Dockerfile
-            cp $SKYFLOW_DIR/component/docker/server/$server/default/docker-compose.yml docker/docker-compose.yml
-            break
-          ;;
-          *)
-            $SKYFLOW_DIR/helper.sh "printError" "Invalid selection"
-          ;;
-        esac
-    done
-
-    sed -i "s/ *= */=/g" docker/docker.ini
-    sed -i "s/{{ *server.type *}}/$server/g" docker/Dockerfile
-    sed -i "s/{{ *server.type *}}/$server/g" docker/docker-compose.yml
-    sed -i "s/{{ *php.version *}}/$php/g" docker/Dockerfile
-    sed -i "s/{{ *php.version *}}/$php/g" docker/docker-compose.yml
+    if [ -f $containerDir/$container/$container.sh ]; then
+        sudo chmod +x $containerDir/$container/$container.sh
+        $containerDir/$container/$container.sh "$container"
+    fi
 
     while IFS== read -u3 key value
     do
+
+        key=$(skyflowTrim $key " ")
+        value=$(skyflowTrim $value " ")
+
+        # First char
+        firstchar=${key:0:1}
+
+        if [ "$firstchar" == "[" ] || [ "$firstchar" == ";" ]; then
+            continue
+        fi
+
         read -p "$key [$value] : " newValue
 
-#        if test -z $newValue; then
-#    	    $newValue=$value
-#	    fi
+        if test -z $newValue; then
+    	    newValue=$value
+	    fi
 
         # Todo: Create new group and add current user and apache
-        sed -i "s/$key *= *$value/$key = $newValue/g" docker/docker.ini
-        sed -i "s/{{ *$key *}}/$newValue/g" docker/Dockerfile
-        sed -i "s/{{ *$key *}}/$newValue/g" docker/docker-compose.yml
-    done 3< docker/docker.ini
+        if [ -f docker/Dockerfile ]; then
+            sed -i "s/{{ *$key *}}/$newValue/g" docker/Dockerfile
+        fi
+        if [ -f docker/docker-compose.yml ]; then
+            sed -i "s/{{ *$key *}}/$newValue/g" docker/docker-compose.yml
+        fi
 
-    echo -e "\033[0;92mYour docker environment is ready! Run 'skyflow-docker up' command to up your environment.\033[0m"
+    done 3< $containerDir/$container/$container.ini
+
+    $SKYFLOW_DIR/helper.sh "printSuccess" "Your docker environment is ready! Run 'skyflow-docker up' command to up your environment."
     exit 0
 }
 
 function findDockerComposeFile()
 {
-    cd $PWD
-    if [ -d docker ] && [ ! -f docker-compose.yml ]; then
-        cd docker
-    fi
+    $SKYFLOW_DIR/helper.sh "findComposeFile"
 
-    if [ ! -f docker-compose.yml ]; then
-        $SKYFLOW_DIR/helper.sh "printError" "docker-compose.yml file not found."
-        exit 1
-    fi
 }
 
 function skyflowRunCommand()
 {
-#    sudo $1
-#
-#    if [ $? -eq 0 ]; then
-#        $SKYFLOW_DIR/helper.sh "printSuccess" "$1"
-#        exit 0
-#    else
-#        $SKYFLOW_DIR/helper.sh "printError" "'$1' command failed"
-#        exit $?
-#    fi
     $SKYFLOW_DIR/helper.sh "runCommand" "$1"
 }
 
 function skyflowDockerUp()
 {
-    findDockerComposeFile
+#    findDockerComposeFile
 
     skyflowRunCommand "docker-compose up --build -d"
 }
@@ -140,30 +105,104 @@ function skyflowDockerUp()
 function skyflowDockerLs()
 {
     # Trim : Remove last 's' char
-    shopt -s extglob
     input=$1
-    # input="${input##*(s)}" => Trim leading 's' char
-    input="${input%%*(s)}"
-    shopt -u extglob
-    skyflowRunCommand "docker $input ls -a"
+    input=$(skyflowTrim $input "s")
+
+    case $input in
+        "image"|"container")
+            skyflowRunCommand "docker $input ls -a"
+        ;;
+        "compose")
+            cd $SKYFLOW_DIR/component/docker/compose
+            count=0; echo
+            for compose in *.yml
+            do
+                count=$((count + 1))
+                echo -e "$count - \033[0;35m$compose\033[0m"
+            done
+            echo
+        ;;
+        *)
+            skyflowRunCommand "docker container ls -a"
+        ;;
+    esac
+
 }
 
 function skyflowDockerRm()
 {
     # Trim : Remove last 's' char
-    shopt -s extglob
     input=$1
-    # input="${input##*(s)}" => Trim leading 's' char
-    input="${input%%*(s)}"
-    shopt -u extglob
-#    'docker ' . $w . ' rm $(docker ' . $w . ' ls -a -q) -f'
+    input=$(skyflowTrim $input "s")
+
+    if test -z $input; then
+        input="container"
+    fi
+
     skyflowRunCommand "docker $input rm $(docker $input ls -a -q) -f"
+}
+
+function skyflowTrim()
+{
+    echo $SKYFLOW_DIR/helper.sh "trim" "$1" "$2"
+}
+
+function skyflowDockerUseCompose()
+{
+    compose=$1
+    dockerDir=$SKYFLOW_DIR/component/docker
+    if [ ! -f $dockerDir/compose/$compose.yml ]; then
+        $SKYFLOW_DIR/helper.sh "printError" "Compose '$compose' not found. Use 'skyflow-docker ls compose' command."
+        exit 1
+    fi
+
+    # Enter docker directory
+#    findDockerComposeFile
+
+    composeContent=`cat $dockerDir/compose/$compose.yml`
+    echo -e "\n\n$composeContent" >> docker-compose.yml
+
+    while IFS== read -u3 key value
+    do
+        key=$(skyflowTrim $key " ")
+        value=$(skyflowTrim $value " ")
+
+        # First char
+        firstchar=${key:0:1}
+
+        if [ "$firstchar" == "[" ] || [ "$firstchar" == ";" ]; then
+            continue
+        fi
+
+        read -p "$key [$value] : " newValue
+
+        if test -z $newValue; then
+    	    newValue=$value
+	    fi
+
+        if [ -f Dockerfile ]; then
+            sed -i "s#{{ *$key *}}#$newValue#g" Dockerfile
+        fi
+        if [ -f docker-compose.yml ]; then
+            sed -i "s#{{ *$key *}}#$newValue#g" docker-compose.yml
+        fi
+
+    done 3< $dockerDir/compose/$compose.ini
+
+    if [ -d $dockerDir/conf/$compose ]; then
+        cp -r $dockerDir/conf/$compose $CWD/docker/conf/$compose
+    fi
+
+    if [ -d $dockerDir/extra/$compose ]; then
+        cp -r $dockerDir/extra/$compose $CWD/docker/extra/$compose
+    fi
+
 }
 
 
 case $1 in
     "-h"|"--help")
-        $SKYFLOW_DIR/helper.sh "-h" "Skyflow Docker CLI" "$author" $docFile
+        $SKYFLOW_DIR/helper.sh "-h" "Skyflow Docker CLI" "$author" "$docFile"
     ;;
     "-v"|"--version")
         $SKYFLOW_DIR/helper.sh "-v" "$versionMessage" "$author"
@@ -180,8 +219,11 @@ case $1 in
     "rm")
         skyflowDockerRm "$2"
     ;;
+    "use")
+        skyflowDockerUseCompose "$2"
+    ;;
     *)
-        findDockerComposeFile
+#        findDockerComposeFile
         skyflowRunCommand "docker-compose $1"
     ;;
 esac

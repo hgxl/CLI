@@ -1,9 +1,10 @@
-{{ CONTAINER_NAME }}:
-    container_name: {{ CONTAINER_NAME }}
-    image: adminer
-    restart: always
-    environment:
-      - ADMINER_PLUGINS={{ PLUGINS }}
-      - ADMINER_DESIGN={{ DESIGN }}
-    ports:
-        - {{ PORT }}:8080
+    {{ container.name }}:
+        container_name: {{ container.name }}
+        image: adminer
+        restart: always
+        environment:
+          - ADMINER_PLUGINS={{ plugins }}
+          - ADMINER_DESIGN={{ design }}
+        ports:
+            - {{ port }}:8080
+
