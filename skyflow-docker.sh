@@ -97,9 +97,9 @@ function skyflowDockerInit()
 
     done 3< $containerDir/$container/$container.ini
 
-    if [ -f $containerDir/$container/$container.sh ]; then
-        sudo $containerDir/$container/$container.sh "finish"
-    fi
+#    if [ -f $containerDir/$container/$container.sh ]; then
+#        sudo $containerDir/$container/$container.sh "finish"
+#    fi
 
     $SKYFLOW_DIR/helper.sh "printSuccess" "Your docker environment is ready! Run 'skyflow-docker up' command to up your environment."
     exit 0

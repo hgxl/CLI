@@ -13,15 +13,15 @@ function skyflowApache2Init()
         case $php in
           5|7)
 
-            if [ -d $dockerDir/conf/php$php ]; then
                 cp -r $dockerDir/conf/php$php conf/php$php
+            if [ -d $dockerDir/conf/php$php ]; then
                 if [ -f conf/php$php/conf.d/.gitignore ]; then
                     rm conf/php$php/conf.d/.gitignore
                 fi
             fi
 
-            if [ -d $dockerDir/extra/php$php ]; then
                 cp -r $dockerDir/extra/php$php extra/php$php
+            if [ -d $dockerDir/extra/php$php ]; then
                 if [ -f extra/php$php/modules/.gitignore ]; then
                     rm extra/php$php/modules/.gitignore
                 fi
