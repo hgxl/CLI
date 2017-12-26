@@ -4,10 +4,7 @@ export SKYFLOW_DIR=$HOME/.skyflow
 
 function skyflowApache2Init()
 {
-#    echo $PWD
-#    exit 0
     container="apache2"
-#     cd $1/docker
     dockerDir=$SKYFLOW_DIR/component/docker
 
     export PS3="Select your php version : "
@@ -65,7 +62,11 @@ function skyflowApache2BeforeWrite()
 {
     if [ "$1" == "application.name" ]; then
         echo "$2" | tr '[:upper:]' '[:lower:]'
+    elif [ "$1" == "server.name" ]; then
+        echo -e "\n127.0.0.1\t$2" >> /etc/hosts
     fi
+
+    echo "$2"
 }
 
 function skyflowApache2Finish()

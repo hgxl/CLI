@@ -87,6 +87,8 @@ function skyflowDockerInit()
             newValue=$($containerDir/$container/$container.sh "beforeWrite" "$key" "$newValue")
         fi
 
+        echo $newValue
+
         # Todo: Create new group and add current user and apache
         if [ -f Dockerfile ]; then
             sed -i "s/{{ *$key *}}/$newValue/g" Dockerfile
