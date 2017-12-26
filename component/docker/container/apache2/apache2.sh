@@ -94,11 +94,13 @@ function skyflowApache2Finish()
 
     if [ "$documentRoot" == "." ] && [ ! -f ../$directoryIndex ]; then
         touch ../$directoryIndex
+        echo "<h1>$applicationName application is ready!</h1>" >> ../$directoryIndex
         $SKYFLOW_DIR/helper.sh "printSuccess" "'$directoryIndex' file was created."
     fi
 
     if [ "$directoryIndex" != "." ] && [ ! -f ../$documentRoot/$directoryIndex ]; then
         touch ../$documentRoot/$directoryIndex
+        echo "<h1>$applicationName application is ready!</h1>" >> ../$documentRoot/$directoryIndex
         $SKYFLOW_DIR/helper.sh "printSuccess" "'$documentRoot/$directoryIndex' file was created."
     fi
 
