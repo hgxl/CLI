@@ -1,18 +1,5 @@
 #! /bin/sh
 
-# Input
-
-#echo "Enter names : "
-#read name1 name2
-#echo "Names are : $name1, $name2"
-
-#read -p "Nom sur une ligne : " name3
-#read -sp "Enter password : " myPass
-
-#echo "Enter name as array : "
-#read -a names
-#echo "Names : ${names[0]}, ${names[1]}"
-
 export SKYFLOW_DIR=$HOME/.skyflow
 export SKYFLOW_CACHE_DIR=$SKYFLOW_DIR/cache
 export SKYFLOW_VERSION="1.0.0"
@@ -20,7 +7,7 @@ export SKYFLOW_GITHUB_URL="https://github.com/franckdiomande/Skyflow-cli.git"
 
 author="Skyflow Team - Franck Diomandé <fkdiomande@gmail.com>"
 versionMessage="Skyflow CLI version $SKYFLOW_VERSION"
-docFile="$SKYFLOW_DIR/skyflow.ini"
+docFile="$SKYFLOW_DIR/doc.ini"
 
 function skyflowInit()
 {
@@ -46,7 +33,7 @@ function skyflowInit()
     	rm -rf $SKYFLOW_CACHE_DIR/.git
 	fi
 
-	cp $SKYFLOW_CACHE_DIR/skyflow.ini $SKYFLOW_DIR/skyflow.ini
+	cp $SKYFLOW_CACHE_DIR/doc.ini $SKYFLOW_DIR/doc.ini
 	cp $SKYFLOW_CACHE_DIR/helper.sh $SKYFLOW_DIR/helper.sh
 	sudo chmod +x $SKYFLOW_DIR/helper.sh
 }
@@ -113,13 +100,13 @@ case $1 in
         skyflowInit "-f"
     ;;
     "-h"|"--help")
-        $SKYFLOW_DIR/helper.sh "-h" "Skyflow CLI" "$author" $docFile
+        $SKYFLOW_DIR/helper.sh "-h" "Skyflow CLI" "$author" "$docFile"
     ;;
     "-v"|"--version")
         $SKYFLOW_DIR/helper.sh "-v" "$versionMessage" "$author"
     ;;
     *)
-        $SKYFLOW_DIR/helper.sh "-h" "Skyflow CLI" "$author" $docFile
+        $SKYFLOW_DIR/helper.sh "-h" "Skyflow CLI" "$author" "$docFile"
     ;;
 esac
 

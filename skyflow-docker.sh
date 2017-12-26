@@ -9,6 +9,25 @@ docFile="$SKYFLOW_DIR/component/docker/doc.ini"
 
 CWD=$PWD
 
+# =======================================
+
+function skyflowRunCommand()
+{
+    $SKYFLOW_DIR/helper.sh "runCommand" "$1"
+}
+
+function findDockerComposeFile()
+{
+    $SKYFLOW_DIR/helper.sh "findComposeFile"
+}
+
+function skyflowTrim()
+{
+    $SKYFLOW_DIR/helper.sh "trim" "$1" "$2"
+}
+
+# =======================================
+
 function skyflowDockerInit()
 {
     if [ -d docker ] && test -z $1; then
@@ -38,12 +57,9 @@ function skyflowDockerInit()
         esac
     done
 
-    # Copy docker.ini
-#    cp $containerDir/$container/$container.ini docker/docker.ini
-
     if [ -f $containerDir/$container/$container.sh ]; then
         sudo chmod +x $containerDir/$container/$container.sh
-        $containerDir/$container/$container.sh "$container" "$CWD"
+        $containerDir/$container/$container.sh "$CWD"
     fi
 
     cd $CWD/docker
@@ -81,20 +97,9 @@ function skyflowDockerInit()
     exit 0
 }
 
-function findDockerComposeFile()
-{
-    $SKYFLOW_DIR/helper.sh "findComposeFile"
-}
-
-function skyflowRunCommand()
-{
-    $SKYFLOW_DIR/helper.sh "runCommand" "$1"
-}
-
 function skyflowDockerUp()
 {
-#    findDockerComposeFile
-
+    findDockerComposeFile
     skyflowRunCommand "docker-compose up --build -d"
 }
 
@@ -138,11 +143,6 @@ function skyflowDockerRm()
     skyflowRunCommand "docker $input rm $(docker $input ls -a -q) -f"
 }
 
-function skyflowTrim()
-{
-    echo $SKYFLOW_DIR/helper.sh "trim" "$1" "$2"
-}
-
 function skyflowDockerUseCompose()
 {
     compose=$1
@@ -153,7 +153,7 @@ function skyflowDockerUseCompose()
     fi
 
     # Enter docker directory
-#    findDockerComposeFile
+    findDockerComposeFile
 
     composeContent=`cat $dockerDir/compose/$compose.yml`
     echo -e "\n\n$composeContent" >> docker-compose.yml
@@ -185,18 +185,16 @@ function skyflowDockerUseCompose()
 
     done 3< $dockerDir/compose/$compose.ini
 
-    if [ -d $dockerDir/conf/$compose ]; then
-        cp -r $dockerDir/conf/$compose $CWD/docker/conf/$compose
+    if [ -d $dockerDir/conf/$compose ] && [ ! -d conf/$compose ]; then
+        cp -r $dockerDir/conf/$compose conf/$compose
     fi
 
-    if [ -d $dockerDir/extra/$compose ]; then
-        cp -r $dockerDir/extra/$compose $CWD/docker/extra/$compose
+    if [ -d $dockerDir/extra/$compose ] && [ ! -d extra/$compose ]; then
+        cp -r $dockerDir/extra/$compose extra/$compose
     fi
-
 }
 
-#$SKYFLOW_DIR/helper.sh "findComposeFile"
-
+# =======================================
 
 case $1 in
     "-h"|"--help")
@@ -221,7 +219,7 @@ case $1 in
         skyflowDockerUseCompose "$2"
     ;;
     *)
-#        findDockerComposeFile
+        findDockerComposeFile
         skyflowRunCommand "docker-compose $1"
     ;;
 esac

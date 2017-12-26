@@ -2,7 +2,7 @@
 
 export SKYFLOW_DIR=$HOME/.skyflow
 
-container=$1; cd $2/docker
+container="apache2"; cd $1/docker
 dockerDir=$SKYFLOW_DIR/component/docker
 
 export PS3="Select your php version : "
@@ -13,12 +13,16 @@ do
 
         if [ -d $dockerDir/conf/php$php ]; then
             cp -r $dockerDir/conf/php$php conf/php$php
-            rm conf/php$php/conf.d/.gitignore
+            if [ -f conf/php$php/conf.d/.gitignore ]; then
+                rm conf/php$php/conf.d/.gitignore
+            fi
         fi
 
         if [ -d $dockerDir/extra/php$php ]; then
             cp -r $dockerDir/extra/php$php extra/php$php
-            rm extra/php$php/modules/.gitignore
+            if [ -f extra/php$php/modules/.gitignore ]; then
+                rm extra/php$php/modules/.gitignore
+            fi
         fi
 
         # Set container configuration according to php version
@@ -42,11 +46,11 @@ do
 done
 
 if [ -f Dockerfile ]; then
-    sed -i "s/{{ *container.type *}}/$container/g" Dockerfile
+    sed -i "s/{{ *server.type *}}/$container/g" Dockerfile
     sed -i "s/{{ *php.version *}}/$php/g" Dockerfile
 fi
 if [ -f docker-compose.yml ]; then
-    sed -i "s/{{ *container.type *}}/$container/g" docker-compose.yml
+    sed -i "s/{{ *server.type *}}/$container/g" docker-compose.yml
     sed -i "s/{{ *php.version *}}/$php/g" docker-compose.yml
 fi
 
