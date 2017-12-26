@@ -62,8 +62,11 @@ function skyflowApache2BeforeWrite()
 {
     if [ "$1" == "application.name" ]; then
         echo "$2" | tr '[:upper:]' '[:lower:]'
-    elif [ "$1" == "server.name" ]; then
-        echo -e "\n127.0.0.1\t$2" >> /etc/hosts
+        exit 0
+    fi
+
+    if [ "$1" == "server.name" ]; then
+        sudo echo -e "\n127.0.0.1\t$2" >> /etc/hosts
     fi
 
     echo "$2"
