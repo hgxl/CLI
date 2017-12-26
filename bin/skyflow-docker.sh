@@ -1,5 +1,10 @@
 #! /bin/sh
 
+if [ "$USER" == "root" ]; then
+    echo -e "\033[0;31mSkyflow error: Run without 'root' user.\033[0m"
+    exit 1
+fi
+
 export SKYFLOW_DIR=$HOME/.skyflow
 export SKYFLOW_DOCKER_VERSION="1.0.0"
 
@@ -24,6 +29,11 @@ function findDockerComposeFile()
 function skyflowTrim()
 {
     $SKYFLOW_DIR/helper.sh "trim" "$1" "$2"
+}
+
+function skyflowGetFromIni()
+{
+    $SKYFLOW_DIR/helper.sh "getFromIni" "$1" "$2"
 }
 
 # =======================================
@@ -57,11 +67,15 @@ function skyflowDockerInit()
         esac
     done
 
+    export CURRENT_CONTAINER=$container
+
     cd $CWD/docker
+
+    cp $containerDir/$container/$container.ini ./docker.ini
 
     if [ -f $containerDir/$container/$container.sh ]; then
         sudo chmod +x $containerDir/$container/$container.sh
-        sudo $containerDir/$container/$container.sh "init"
+        $containerDir/$container/$container.sh "init"
     fi
 
     while IFS== read -u3 key value
@@ -84,7 +98,7 @@ function skyflowDockerInit()
 	    fi
 
 	    if [ -f $containerDir/$container/$container.sh ]; then
-            newValue=$(sudo $containerDir/$container/$container.sh "beforeWrite" "$key" "$newValue")
+            newValue=$($containerDir/$container/$container.sh "beforeWrite" "$key" "$newValue")
         fi
 
         # Todo: Create new group and add current user and apache
@@ -95,10 +109,12 @@ function skyflowDockerInit()
             sed -i "s/{{ *$key *}}/$newValue/g" docker-compose.yml
         fi
 
-    done 3< $containerDir/$container/$container.ini
+        sed -i "s/ *$key *= *$value/$key = $newValue/g" docker.ini
+
+    done 3< docker.ini
 
     if [ -f $containerDir/$container/$container.sh ]; then
-        sudo $containerDir/$container/$container.sh "finish"
+        $containerDir/$container/$container.sh "finish"
     fi
 
     $SKYFLOW_DIR/helper.sh "printSuccess" "Your docker environment is ready! Run 'skyflow-docker up' command to up your environment."
@@ -135,7 +151,6 @@ function skyflowDockerLs()
             skyflowRunCommand "docker container ls -a"
         ;;
     esac
-
 }
 
 function skyflowDockerRm()

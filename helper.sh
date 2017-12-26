@@ -28,6 +28,18 @@ function skyflowTrim()
 
 # Display help for command
 # Arguments:
+# - $1 : Ini file
+# - $2 : Key
+function skyflowGetFromIni()
+{
+    content=$(cat $1)
+    value=`expr match "$content" ".*$2 *= *\([^\n\r]*\)"`
+    value=$(skyflowTrim $value " /")
+    echo -e "$value"
+}
+
+# Display help for command
+# Arguments:
 # - $1 : Title
 # - $2 : Author
 # - $3 : File to use (doc.ini)
@@ -127,6 +139,9 @@ case $1 in
     ;;
     "findComposeFile")
         findDockerComposeFile
+    ;;
+    "getFromIni")
+        skyflowGetFromIni "$2" "$3"
     ;;
 esac
 

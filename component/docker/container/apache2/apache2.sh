@@ -1,10 +1,19 @@
 #! /bin/sh
 
-export SKYFLOW_DIR=$HOME/.skyflow
+#export SKYFLOW_DIR=$HOME/.skyflow
+
+# =======================================
+
+function skyflowGetFromIni()
+{
+    $SKYFLOW_DIR/helper.sh "getFromIni" "$1" "$2"
+}
+
+# =======================================
 
 function skyflowApache2Init()
 {
-    local container=apache2
+    local container=$CURRENT_CONTAINER
     local dockerDir=$SKYFLOW_DIR/component/docker
 
     export PS3="Select your php version : "
@@ -66,16 +75,38 @@ function skyflowApache2BeforeWrite()
         exit 0
     fi
 
-    if [ "$1" == "server.name" ]; then
-        echo -e "\n127.0.0.1\t$2" >> /etc/hosts
-    fi
-
     echo "$2"
 }
 
 function skyflowApache2Finish()
 {
-    echo ""
+    local applicationName=$(skyflowGetFromIni "docker.ini" "application.name")
+    local serverName=$(skyflowGetFromIni "docker.ini" "server.name")
+    local directoryIndex=$(skyflowGetFromIni "docker.ini" "directory.index")
+    local documentRoot=$(skyflowGetFromIni "docker.ini" "document.root")
+    local containerPort=$(skyflowGetFromIni "docker.ini" "container.port")
+
+    # Create document root and directory index
+    if [ "$documentRoot" != "." ] && [ ! -d ../$documentRoot ]; then
+        mkdir ../$documentRoot
+        $SKYFLOW_DIR/helper.sh "printSuccess" "'$documentRoot' directory was created."
+    fi
+
+    if [ "$documentRoot" == "." ] && [ ! -f ../$directoryIndex ]; then
+        touch ../$directoryIndex
+        $SKYFLOW_DIR/helper.sh "printSuccess" "'$directoryIndex' file was created."
+    fi
+
+    if [ "$directoryIndex" != "." ] && [ ! -f ../$documentRoot/$directoryIndex ]; then
+        touch ../$documentRoot/$directoryIndex
+        $SKYFLOW_DIR/helper.sh "printSuccess" "'$documentRoot/$directoryIndex' file was created."
+    fi
+
+    # Add server name to hosts file
+    sudo chmod 777 docker.ini
+    echo -e "127.0.0.1\t$serverName" >> /etc/hosts
+    $SKYFLOW_DIR/helper.sh "printSuccess" "'$serverName' added to your hosts file."
+    echo -e "\033[0;94mGo to \033[4;94m$serverName:$containerPort\033[0m"
 }
 
 case $1 in
