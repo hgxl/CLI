@@ -1,7 +1,7 @@
 #! /bin/sh
 
 export SKYFLOW_DIR=$HOME/.skyflow
-export SKYFLOW_CACHE_DIR=$SKYFLOW_DIR/cache
+export SKYFLOW_CACHE_DIR=$SKYFLOW_DIR/.cache
 export SKYFLOW_VERSION="1.0.0"
 export SKYFLOW_GITHUB_URL="https://github.com/franckdiomande/Skyflow-cli.git"
 
@@ -11,6 +11,14 @@ docFile="$SKYFLOW_DIR/doc.ini"
 
 function skyflowInit()
 {
+    case $1 in
+        "-f")
+            if [ -d $SKYFLOW_DIR ]; then
+                rm -rf $SKYFLOW_DIR
+            fi
+        ;;
+    esac
+
     # Create skyflow directory for current user
     if [ ! -d $SKYFLOW_DIR ]; then
         mkdir $SKYFLOW_DIR
@@ -19,14 +27,6 @@ function skyflowInit()
     if [ ! -d $SKYFLOW_DIR/component ]; then
         mkdir $SKYFLOW_DIR/component
     fi
-
-    case $1 in
-        "-f")
-            if [ -d $SKYFLOW_CACHE_DIR ]; then
-                rm -rf $SKYFLOW_CACHE_DIR
-            fi
-        ;;
-    esac
 
     if [ ! -d $SKYFLOW_CACHE_DIR ]; then
     	git clone $SKYFLOW_GITHUB_URL $SKYFLOW_CACHE_DIR
