@@ -33,8 +33,8 @@ function skyflowTrim()
 function skyflowGetFromIni()
 {
     content=$(cat $1)
-    value=`expr match "$content" ".*$2 *= *\([^'\n''\r']*\)"`
-#    value=`expr match "$content" ".*$2 *= *\([a-zA-Z0-9_@\.-]*\)"`
+#    value=`expr match "$content" ".*$2 *= *\([^'\n''\r']*\)"`
+    value=`expr match "$content" ".*$2 *= *\([a-zA-Z0-9_@\.-]*\)"`
     value=$(skyflowTrim $value " /")
     echo -e "$value"
 }
