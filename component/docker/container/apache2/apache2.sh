@@ -2,11 +2,8 @@
 
 export SKYFLOW_DIR=$HOME/.skyflow
 
+container=$1; cd $2/docker
 dockerDir=$SKYFLOW_DIR/component/docker
-
-container=$1
-
-$SKYFLOW_DIR/helper.sh "findComposeFile"
 
 export PS3="Select your php version : "
 select php in 5 7 none

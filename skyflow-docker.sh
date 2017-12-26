@@ -9,12 +9,8 @@ docFile="$SKYFLOW_DIR/component/docker/doc.ini"
 
 CWD=$PWD
 
-$SKYFLOW_DIR/helper.sh "findComposeFile"
-
 function skyflowDockerInit()
 {
-    cd $CWD
-    
     if [ -d docker ] && test -z $1; then
     	$SKYFLOW_DIR/helper.sh "printError" "docker directory already exists. Use -f option to continue."
     	exit 1
@@ -42,14 +38,15 @@ function skyflowDockerInit()
         esac
     done
 
-    cd $CWD
     # Copy docker.ini
 #    cp $containerDir/$container/$container.ini docker/docker.ini
 
     if [ -f $containerDir/$container/$container.sh ]; then
         sudo chmod +x $containerDir/$container/$container.sh
-        $containerDir/$container/$container.sh "$container"
+        $containerDir/$container/$container.sh "$container" "$CWD"
     fi
+
+    cd $CWD/docker
 
     while IFS== read -u3 key value
     do
@@ -71,11 +68,11 @@ function skyflowDockerInit()
 	    fi
 
         # Todo: Create new group and add current user and apache
-        if [ -f docker/Dockerfile ]; then
-            sed -i "s/{{ *$key *}}/$newValue/g" docker/Dockerfile
+        if [ -f Dockerfile ]; then
+            sed -i "s/{{ *$key *}}/$newValue/g" Dockerfile
         fi
-        if [ -f docker/docker-compose.yml ]; then
-            sed -i "s/{{ *$key *}}/$newValue/g" docker/docker-compose.yml
+        if [ -f docker-compose.yml ]; then
+            sed -i "s/{{ *$key *}}/$newValue/g" docker-compose.yml
         fi
 
     done 3< $containerDir/$container/$container.ini
@@ -87,7 +84,6 @@ function skyflowDockerInit()
 function findDockerComposeFile()
 {
     $SKYFLOW_DIR/helper.sh "findComposeFile"
-
 }
 
 function skyflowRunCommand()
@@ -198,6 +194,8 @@ function skyflowDockerUseCompose()
     fi
 
 }
+
+#$SKYFLOW_DIR/helper.sh "findComposeFile"
 
 
 case $1 in

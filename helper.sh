@@ -94,7 +94,7 @@ function skyflowRunCommand()
 
 function findDockerComposeFile()
 {
-    CWD=$PWD; cd $PWD
+#    CWD=$PWD; cd $PWD
 
     if [ -d docker ] && [ ! -f docker-compose.yml ]; then
         cd docker
