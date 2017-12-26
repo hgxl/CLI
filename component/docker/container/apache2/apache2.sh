@@ -4,9 +4,7 @@ export SKYFLOW_DIR=$HOME/.skyflow
 
 function skyflowApache2Init()
 {
-    echo $PWD
-
-    container="apache2"
+    container=apache2
     dockerDir=$SKYFLOW_DIR/component/docker
 
     export PS3="Select your php version : "
