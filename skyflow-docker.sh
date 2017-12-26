@@ -61,7 +61,7 @@ function skyflowDockerInit()
 
     if [ -f $containerDir/$container/$container.sh ]; then
         sudo chmod +x $containerDir/$container/$container.sh
-        $containerDir/$container/$container.sh "init"
+        sudo $containerDir/$container/$container.sh "init"
     fi
 
     while IFS== read -u3 key value
@@ -84,10 +84,8 @@ function skyflowDockerInit()
 	    fi
 
 	    if [ -f $containerDir/$container/$container.sh ]; then
-            newValue=$($containerDir/$container/$container.sh "beforeWrite" "$key" "$newValue")
+            newValue=$(sudo $containerDir/$container/$container.sh "beforeWrite" "$key" "$newValue")
         fi
-
-        echo $newValue
 
         # Todo: Create new group and add current user and apache
         if [ -f Dockerfile ]; then
@@ -100,7 +98,7 @@ function skyflowDockerInit()
     done 3< $containerDir/$container/$container.ini
 
     if [ -f $containerDir/$container/$container.sh ]; then
-        $containerDir/$container/$container.sh "finish"
+        sudo $containerDir/$container/$container.sh "finish"
     fi
 
     $SKYFLOW_DIR/helper.sh "printSuccess" "Your docker environment is ready! Run 'skyflow-docker up' command to up your environment."

@@ -4,6 +4,8 @@ export SKYFLOW_DIR=$HOME/.skyflow
 
 function skyflowApache2Init()
 {
+    echo $PWD
+
     container="apache2"
     dockerDir=$SKYFLOW_DIR/component/docker
 
@@ -66,7 +68,7 @@ function skyflowApache2BeforeWrite()
     fi
 
     if [ "$1" == "server.name" ]; then
-        sudo echo -e "\n127.0.0.1\t$2" >> /etc/hosts
+        echo -e "\n127.0.0.1\t$2" >> /etc/hosts
     fi
 
     echo "$2"
