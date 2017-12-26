@@ -103,7 +103,7 @@ function skyflowApache2Finish()
     fi
 
     # Add server name to hosts file
-    echo -e "127.0.0.1\t$serverName" | sudo tee --append /etc/hosts
+    sudo sh -c "echo 127.0.0.1\t$serverName >> /etc/hosts"
     $SKYFLOW_DIR/helper.sh "printSuccess" "'$serverName' added to your hosts file."
     echo -e "\033[0;94mGo to \033[4;94m$serverName:$containerPort\033[0m"
 }
