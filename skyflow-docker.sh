@@ -1,5 +1,10 @@
 #! /bin/sh
 
+if [ "$USER" == "root" ]; then
+    echo -e "\033[0;31mSkyflow error: Run without 'root' user.\033[0m"
+    exit 1
+fi
+
 export SKYFLOW_DIR=$HOME/.skyflow
 export SKYFLOW_DOCKER_VERSION="1.0.0"
 
@@ -61,7 +66,7 @@ function skyflowDockerInit()
 
     if [ -f $containerDir/$container/$container.sh ]; then
         sudo chmod +x $containerDir/$container/$container.sh
-        sudo $containerDir/$container/$container.sh "init"
+        $containerDir/$container/$container.sh "init"
     fi
 
     while IFS== read -u3 key value
@@ -97,9 +102,9 @@ function skyflowDockerInit()
 
     done 3< $containerDir/$container/$container.ini
 
-#    if [ -f $containerDir/$container/$container.sh ]; then
-#        sudo $containerDir/$container/$container.sh "finish"
-#    fi
+    if [ -f $containerDir/$container/$container.sh ]; then
+        $containerDir/$container/$container.sh "finish"
+    fi
 
     $SKYFLOW_DIR/helper.sh "printSuccess" "Your docker environment is ready! Run 'skyflow-docker up' command to up your environment."
     exit 0

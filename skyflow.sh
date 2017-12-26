@@ -1,5 +1,10 @@
 #! /bin/sh
 
+if [ "$USER" == "root" ]; then
+    echo -e "\033[0;31mSkyflow error: Run without 'root' user.\033[0m"
+    exit 1
+fi
+
 export SKYFLOW_DIR=$HOME/.skyflow
 export SKYFLOW_CACHE_DIR=$SKYFLOW_DIR/.cache
 export SKYFLOW_VERSION="1.0.0"
