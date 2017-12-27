@@ -2,17 +2,17 @@
 
 function skyflowPrintError()
 {
-    echo -e "\033[0;31mSkyflow error: "$1" \033[0m"
+    echo -e "\033[0;31mSkyflow error: $1\033[0m"
 }
 
 function skyflowPrintSuccess()
 {
-    echo -e "\033[0;92m✓ "$1" \033[0m"
+    echo -e "\033[0;92m✓ $1\033[0m"
 }
 
 function skyflowPrintInfo()
 {
-    echo -e "\033[0;94m"$1" \033[0m"
+    echo -e "\033[0;94m$1\033[0m"
 }
 
 function skyflowTrim()
@@ -33,8 +33,7 @@ function skyflowTrim()
 function skyflowGetFromIni()
 {
     content=$(cat $1)
-#    value=`expr match "$content" ".*$2 *= *\([^'\n''\r']*\)"`
-    value=`expr match "$content" ".*$2 *= *\([a-zA-Z0-9_@\.-]*\)"`
+    value=`expr match "$content" ".*$2 *= *\([a-zA-Z0-9_@\.-'\"]*\)"`
     value=$(skyflowTrim $value " /")
     echo -e "$value"
 }
@@ -104,18 +103,6 @@ function skyflowRunCommand()
     fi
 }
 
-function findDockerComposeFile()
-{
-    if [ -d docker ] && [ ! -f docker-compose.yml ]; then
-        cd docker
-    fi
-
-    if [ ! -f docker-compose.yml ]; then
-        skyflowPrintError "docker-compose.yml file not found."
-        exit 1
-    fi
-}
-
 case $1 in
     "-h")
         skyflowHelp "$2" "$3" "$4"
@@ -137,9 +124,6 @@ case $1 in
     ;;
     "runCommand")
         skyflowRunCommand "$2"
-    ;;
-    "findComposeFile")
-        findDockerComposeFile
     ;;
     "getFromIni")
         skyflowGetFromIni "$2" "$3"

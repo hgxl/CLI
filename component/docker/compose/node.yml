@@ -5,7 +5,7 @@
         working_dir: /home/{{ user }}/app
         restart: always
         volumes:
-            - {{ APPLICATION_DIR }}:/home/{{ user }}/app
+            - {{ application.dir }}:/home/{{ user }}/app
         environment:
             NODE_ENV: {{ env }}
         expose:

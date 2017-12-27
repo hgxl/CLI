@@ -1,9 +1,5 @@
 #! /bin/sh
 
-#export SKYFLOW_DIR=$HOME/.skyflow
-
-# =======================================
-
 function skyflowGetFromIni()
 {
     $SKYFLOW_DIR/helper.sh "getFromIni" "$1" "$2"
@@ -105,7 +101,7 @@ function skyflowApache2Finish()
     fi
 
     # Add server name to hosts file
-    sudo sh -c "echo -e 127.0.0.1\t$serverName >> /etc/hosts"
+    sudo sh -c "echo -e 127.0.0.1    $serverName >> /etc/hosts"
     $SKYFLOW_DIR/helper.sh "printSuccess" "'$serverName' added to your hosts file."
     echo -e "\033[0;94mAfter 'skyflow-docker up' command, go to \033[4;94m$serverName:$containerPort\033[0m"
 }
@@ -114,12 +110,12 @@ case $1 in
     "init")
         skyflowApache2Init
     ;;
-
     "beforeWrite")
         skyflowApache2BeforeWrite "$2" "$3"
     ;;
-
     "finish")
         skyflowApache2Finish
     ;;
 esac
+
+exit 0

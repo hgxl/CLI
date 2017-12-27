@@ -1,6 +1,6 @@
     {{ container.name }}:
         container_name: {{ container.name }}
-        image: mariadb:10.3
+        image: mariadb:{{ version }}
         restart: always
         volumes:
             - {{ storage }}:/var/lib/mysql

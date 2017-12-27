@@ -38,9 +38,17 @@ function skyflowInit()
     	rm -rf $SKYFLOW_CACHE_DIR/.git
 	fi
 
-	cp $SKYFLOW_CACHE_DIR/doc.ini $SKYFLOW_DIR/doc.ini
-	cp $SKYFLOW_CACHE_DIR/helper.sh $SKYFLOW_DIR/helper.sh
-	sudo chmod +x $SKYFLOW_DIR/helper.sh
+    if [ ! -f $SKYFLOW_DIR/doc.ini ]; then
+        cp $SKYFLOW_CACHE_DIR/doc.ini $SKYFLOW_DIR/doc.ini
+    fi
+
+    if [ ! -f $SKYFLOW_DIR/helper.sh ]; then
+        cp $SKYFLOW_CACHE_DIR/helper.sh $SKYFLOW_DIR/helper.sh
+    fi
+
+    if [ ! -x $SKYFLOW_DIR/helper.sh ]; then
+	    sudo chmod +x $SKYFLOW_DIR/helper.sh
+    fi
 }
 
 function skyflowInstall()
@@ -92,6 +100,26 @@ function skyflowRemove()
     exit 0
 }
 
+function skyflowList()
+{
+    cd $SKYFLOW_DIR/component
+    count=0;
+
+    echo
+    echo -e "\033[0;96mSkyflow components:\033[0m"
+    start=1
+    end=25
+    for ((i=$start; i<=$end; i++)); do echo -n -e "\033[0;96m-\033[0m"; done
+    echo
+
+    for compose in *
+    do
+        count=$((count + 1))
+        echo -e "$count - \033[0;35m$compose\033[0m"
+    done
+    echo
+}
+
 skyflowInit
 
 case $1 in
@@ -100,6 +128,9 @@ case $1 in
     ;;
     "remove")
         skyflowRemove "$2"
+    ;;
+    "list")
+        skyflowList
     ;;
     "init"|"update")
         skyflowInit "-f"
