@@ -88,7 +88,7 @@ function skyflowDockerInit()
         $containerDir/$container/$container.sh "init"
     fi
 
-    while IFS== read -u3 line
+    while read -u3 line
     do
         # First char
         firstchar=${line:0:1}

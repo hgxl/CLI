@@ -54,23 +54,23 @@ function skyflowHelp()
 
     echo
 
-    while IFS== read command desc
+    while read line
     do
-        command=$(skyflowTrim $command " ")
-        desc=$(skyflowTrim $desc " ")
-
         # First char
-        firstchar=${command:0:1}
+        firstchar=${line:0:1}
 
         if [ "$firstchar" == "[" ] || [ "$firstchar" == ";" ]; then
             continue
         fi
 
+        key=`expr match "$line" "\([^ ]*\) *= .*"`
+        value=`expr match "$line" "$key *= *\(.*\)"`
+
         # Length
-        len=${#command}
-        echo -n -e "\033[0;35m$command\033[0m"
+        len=${#key}
+        echo -n -e "\033[0;35m$key\033[0m"
         for ((i=1; i<=20-$len; i++)); do echo -n " "; done
-        echo -n -e "\033[0;30m$desc\033[0m"
+        echo -n -e "\033[0;30m$value\033[0m"
         echo
     done < $3
 
