@@ -63,13 +63,13 @@ function skyflowHelp()
             continue
         fi
 
-        key=`expr match "$line" "\([^=]*\) *= .*"`
+        key=`expr match "$line" "\(.*\) *= .*"`
         value=`expr match "$line" "$key *= *\(.*\)"`
 
         # Length
         len=${#key}
         echo -n -e "\033[0;35m$key\033[0m"
-        for ((i=1; i<=20-$len; i++)); do echo -n " "; done
+        for ((i=1; i<=35-$len; i++)); do echo -n " "; done
         echo -n -e "\033[0;30m$value\033[0m"
         echo
     done < $3
