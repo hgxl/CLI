@@ -63,7 +63,7 @@ function skyflowHelp()
             continue
         fi
 
-        key=`expr match "$line" "\(.*\) *= .*"`
+        key=`expr match "$line" "\([^=]*\) *= .*"`
         value=`expr match "$line" "$key *= *\(.*\)"`
 
         # Length
