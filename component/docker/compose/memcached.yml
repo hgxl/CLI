@@ -1,0 +1,7 @@
+    {{ container.name }}:
+        container_name: {{ container.name }}
+        image: memcached:{{ image.version }}
+        restart: always
+        ports:
+            - {{ port }}:11211
+

@@ -1,9 +1,9 @@
     {{ container.name }}:
         container_name: {{ container.name }}
-        image: mariadb:{{ version }}
+        image: mariadb:{{ image.version }}
         restart: always
         volumes:
-            - {{ storage }}:/var/lib/mysql
+            - {{ database.storage.location }}:/var/lib/mysql
             - ./conf/mariadb:/etc/mysql
         environment:
             MYSQL_DATABASE: {{ database.name }}

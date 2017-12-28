@@ -1,11 +1,13 @@
     {{ container.name }}:
         container_name: {{ container.name }}
-        image: phpmyadmin/phpmyadmin
+        image: phpmyadmin/phpmyadmin:{{ image.version }}
         restart: always
+        volumes:
+            - ./conf/phpmyadmin:/etc/phpmyadmin
         environment:
-          - PMA_USER={{ user }}
-          - PMA_PASSWORD={{ password }}
+            PMA_USER={{ user }}
+            PMA_PASSWORD={{ password }}
         ports:
             - {{ port }}:80
         links:
-            -{{ database.container.name }}:db
+            - {{ database.container.name }}:db

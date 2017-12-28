@@ -1,0 +1,7 @@
+    {{ container.name }}:
+        container_name: {{ container.name }}
+        image: mailhog/mailhog:{{ image.version }}
+        restart: always
+        ports:
+            - {{ smtp.server.port }}:1025
+            - {{ web.server.port }}:8025

@@ -1,8 +1,8 @@
     {{ container.name }}:
         container_name: {{ container.name }}
-        image: redis:alpine
+        image: redis:{{ image.version }}
         restart: always
         volumes:
-            - {{ storage }}:/data
+            - {{ database.storage.location }}:/data
         ports:
             - {{ port }}:6379

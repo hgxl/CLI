@@ -1,0 +1,6 @@
+    {{ container.name }}:
+        container_name: {{ container.name }}
+        image: kibana:{{ image.version }}
+        restart: always
+        ports:
+            - {{ port }}:5601

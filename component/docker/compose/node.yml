@@ -1,6 +1,6 @@
     {{ container.name }}:
         container_name: {{ container.name }}
-        image: node:alpine
+        image: node:{{ image.version }}
         user: {{ user }}
         working_dir: /home/{{ user }}/app
         restart: always
@@ -10,4 +10,7 @@
             NODE_ENV: {{ env }}
         expose:
             - {{ port }}
-        command: 'npm start'
+        # Uncomment the line below if you want to run the 'npm start' command when the container starts.
+        #command: "npm start"
+        # Uncomment this line if you don't want to keep container running
+        command: "tail -f /dev/null"

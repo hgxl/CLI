@@ -1,0 +1,10 @@
+    {{ container.name }}:
+        container_name: {{ container.name }}
+        image: elasticsearch:{{ image.version }}
+        restart: always
+        environment:
+            ELASTIC_PASSWORD: {{ password }}
+        ports:
+            - {{ port }}:9200
+        volumes:
+            - {{ database.storage.location }}:/usr/share/elasticsearch/data

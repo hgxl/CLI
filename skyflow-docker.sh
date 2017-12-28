@@ -16,6 +16,7 @@ playbook=1
 CWD=$PWD
 
 # Todo: Create new group and add current user and apache and docker
+# Todo: Can not access to application by localhost
 
 # =======================================
 
@@ -340,7 +341,7 @@ case $1 in
     "rm")
         skyflowDockerRm "$2"
     ;;
-    "use")
+    "use"|"compose")
         skyflowDockerUseCompose "$2"
     ;;
     "playbook")

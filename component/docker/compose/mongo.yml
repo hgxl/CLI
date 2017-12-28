@@ -1,0 +1,12 @@
+    {{ container.name }}:
+        container_name: {{ container.name }}
+        image: mongo:{{ image.version }}
+        restart: always
+        environment:
+            MONGODB_USER: {{ user }}
+            MONGODB_PASS: {{ password }}
+            MONGODB_DATABASE: {{ database.name }}
+        ports:
+            - {{ port }}:27017
+        volumes:
+            - {{ database.storage.location }}:/data/db
