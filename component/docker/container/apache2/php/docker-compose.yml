@@ -6,7 +6,7 @@ services:
         container_name: {{ application.name }}
         build: ./
         ports:
-            - {{ port }}:80
+            - {{ application.port }}:80
         volumes:
             - ..:/var/www/{{ application.name }}
             - ./conf/{{ server.type }}:/etc/{{ server.type }}

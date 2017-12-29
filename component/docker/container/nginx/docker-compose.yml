@@ -13,7 +13,7 @@ services:
             - ./conf/nginx/fastcgi.conf:/etc/nginx/fastcgi.conf:ro
             - ./conf/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
         ports:
-            - {{ port }}:80
+            - {{ application.port }}:80
         links:
           - {{ php.container.name }}
 

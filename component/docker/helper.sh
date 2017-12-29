@@ -18,7 +18,7 @@ function dockerHelperOnContainerFinish()
     local serverName=$(skyflowHelperGetFromIni "docker.ini" "server.name")
     local directoryIndex=$(skyflowHelperGetFromIni "docker.ini" "directory.index")
     local documentRoot=$(skyflowHelperGetFromIni "docker.ini" "document.root")
-    local containerPort=$(skyflowHelperGetFromIni "docker.ini" "port")
+    local containerPort=$(skyflowHelperGetFromIni "docker.ini" "application.port")
 
     # Create document root and directory index
     if [ "$documentRoot" != "." ] && [ ! -d ../$documentRoot ]; then
