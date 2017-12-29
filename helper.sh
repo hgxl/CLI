@@ -1,21 +1,30 @@
 #! /bin/sh
 
-function skyflowPrintError()
+export SKYFLOW_DIR=$HOME/.skyflow
+export SKYFLOW_CACHE_DIR=$SKYFLOW_DIR/.cache
+export SKYFLOW_VERSION="1.0.0"
+export SKYFLOW_GITHUB_URL="https://github.com/franckdiomande/Skyflow-cli.git"
+
+function skyflowHelperPrintError()
 {
     echo -e "\033[0;31mSkyflow error: $1\033[0m"
 }
 
-function skyflowPrintSuccess()
+function skyflowHelperPrintSuccess()
 {
     echo -e "\033[0;92m✓ $1\033[0m"
 }
 
-function skyflowPrintInfo()
+function skyflowHelperPrintInfo()
 {
     echo -e "\033[0;94m$1\033[0m"
 }
 
-function skyflowTrim()
+# Trim string
+# Arguments:
+# - $1 : string
+# - $2 : List of chars
+function skyflowHelperTrim()
 {
     string="$1"
     chars="$2"
@@ -30,11 +39,11 @@ function skyflowTrim()
 # Arguments:
 # - $1 : Ini file
 # - $2 : Key
-function skyflowGetFromIni()
+function skyflowHelperGetFromIni()
 {
     content=$(cat $1)
     value=`expr match "$content" ".*$2 *= *\([a-zA-Z0-9_@\.-'\"]*\)"`
-    value=$(skyflowTrim $value " /")
+    value=$(skyflowHelperTrim $value " /")
     echo -e "$value"
 }
 
@@ -43,7 +52,7 @@ function skyflowGetFromIni()
 # - $1 : Title
 # - $2 : Author
 # - $3 : File to use (doc.ini)
-function skyflowHelp()
+function skyflowHelperPrintHelp()
 {
     echo
     echo -e "\033[0;96m$1\033[0m\033[0;37m - $2\033[0m"
@@ -81,7 +90,7 @@ function skyflowHelp()
 # Arguments:
 # - $1 : Title
 # - $2 : Author
-function skyflowVersion()
+function skyflowHelperPrintVersion()
 {
     echo -e "\033[0;96m$1\033[0m"
     echo -e "\033[0;37m$2\033[0m"
@@ -90,44 +99,15 @@ function skyflowVersion()
 # Run command
 # Arguments:
 # - $1 : Command
-function skyflowRunCommand()
+function skyflowHelperRunCommand()
 {
     sudo $1
 
     if [ $? -eq 0 ]; then
-        skyflowPrintSuccess "$1"
+        skyflowHelperPrintSuccess "$1"
         exit 0
     else
-        skyflowPrintError "'$1' command failed"
+        skyflowHelperPrintError "'$1' command failed"
         exit $?
     fi
 }
-
-case $1 in
-    "-h")
-        skyflowHelp "$2" "$3" "$4"
-    ;;
-    "-v")
-        skyflowVersion "$2" "$3"
-    ;;
-    "printError")
-        skyflowPrintError "$2"
-    ;;
-    "printSuccess")
-        skyflowPrintSuccess "$2"
-    ;;
-    "printInfo")
-        skyflowPrintInfo "$2"
-    ;;
-    "trim")
-        skyflowTrim "$2" "$3"
-    ;;
-    "runCommand")
-        skyflowRunCommand "$2"
-    ;;
-    "getFromIni")
-        skyflowGetFromIni "$2" "$3"
-    ;;
-esac
-
-exit 0

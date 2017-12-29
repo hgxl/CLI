@@ -68,24 +68,22 @@ function skyflowDockerInit()
     export PS3="Select your container : "
     select container in *
     do
-        case $container in
-          apache2|nginx)
-             break
-          ;;
-          *)
-            $SKYFLOW_DIR/helper.sh "printError" "Invalid selection"
-          ;;
-        esac
+        if [ -d $container ]; then
+            break
+        fi
+        $SKYFLOW_DIR/helper.sh "printError" "Invalid selection"
     done
 
     export CURRENT_CONTAINER=$container
 
     cd $CWD/docker
 
-    cp $containerDir/$container/$container.ini ./docker.ini
+    cp $containerDir/$container/$container.ini docker.ini
 
     if [ -f $containerDir/$container/$container.sh ]; then
-        sudo chmod +x $containerDir/$container/$container.sh
+        if [ ! -x $containerDir/$container/$container.sh ]; then
+            sudo chmod +x $containerDir/$container/$container.sh
+        fi
         $containerDir/$container/$container.sh "init"
     fi
 

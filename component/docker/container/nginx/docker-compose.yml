@@ -2,34 +2,27 @@ version: "2"
 
 services:
 
-    nginx:
-        container_name: nginx
-        image: nginx:alpine
-        working_dir: /var/www/nginx
+    {{ application.name }}:
+        container_name: {{ application.name }}
+        image: nginx:{{ image.version }}
+        working_dir: /var/www/{{ application.name }}
         restart: always
-        environment:
-            APPLICATION_NAME: nginx
-            SERVER_NAME: dev.toto.io
-            DOCUMENT_ROOT: .
-            DIRECTORY_INDEX: index.php
-            PHP_CONTAINER_NAME: php
         volumes:
-            - ..:/var/www/nginx
+            - ..:/var/www/{{ application.name }}
             - ./conf/nginx/conf.d:/etc/nginx/conf.d
             - ./conf/nginx/fastcgi.conf:/etc/nginx/fastcgi.conf:ro
             - ./conf/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
         ports:
-            - 8080:80
+            - {{ port }}:80
         links:
-          - php
+          - {{ php.container.name }}
 
-    php:
-        container_name: php
-        image: php:fpm-alpine
-        working_dir: /var/www/nginx
+    {{ php.container.name }}:
+        container_name: {{ php.container.name }}
+        image: php:{{ php.image.version }}
+        working_dir: /var/www/{{ application.name }}
         restart: always
         volumes:
-            - ..:/var/www/nginx
+            - ..:/var/www/{{ application.name }}
         ports:
-            - 9000:9000
-
+            - {{ php.port }}:9000
