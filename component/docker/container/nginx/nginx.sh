@@ -1,33 +1,36 @@
 #! /bin/sh
 
-function skyflowGetFromIni()
-{
-    $SKYFLOW_DIR/helper.sh "getFromIni" "$1" "$2"
-}
+#source ././../../../../helper.sh
+source $HOME/.skyflow/helper.sh
 
-# =======================================
+#source ././../../helper.sh
+source $HOME/.skyflow/component/docker/helper.sh
 
-function skyflowNginxInit()
+function skyflowDockerOnContainerInit()
 {
-    local container=$CURRENT_CONTAINER
-    local dockerDir=$SKYFLOW_DIR/component/docker
+    local container=nginx
 
     # Copy configuration files
-    if [ -d $dockerDir/conf/$container ]; then
-        cp -r $dockerDir/conf/$container conf/$container
+    if [ -d $SKYFLOW_DOCKER_DIR/conf/$container ]; then
+        cp -r $SKYFLOW_DOCKER_DIR/conf/$container conf/$container
     fi
 
     # Copy docker-compose.yml file
-    if [ -f $dockerDir/container/$container/docker-compose.yml ]; then
-        cp $dockerDir/container/$container/docker-compose.yml docker-compose.yml
+    if [ -f $SKYFLOW_DOCKER_DIR/container/$container/docker-compose.yml ]; then
+        cp $SKYFLOW_DOCKER_DIR/container/$container/docker-compose.yml docker-compose.yml
+    fi
+
+    # Copy php configuration files
+    cp -r $SKYFLOW_DOCKER_DIR/conf/php conf/php
+    if [ -f conf/php/conf.d/.gitignore ]; then
+        rm conf/php/conf.d/.gitignore
     fi
 
 }
 
-function skyflowNginxBeforeWrite()
+function skyflowDockerOnContainerProgress()
 {
-    local container=$CURRENT_CONTAINER
-    local dockerDir=$SKYFLOW_DIR/component/docker
+    local container=nginx
 
     local value=$2
 
@@ -36,28 +39,14 @@ function skyflowNginxBeforeWrite()
         value="$2" | tr '[:upper:]' '[:lower:]'
     fi
 
-    if [ -f $dockerDir/conf/$container/conf.d/default.conf ]; then
-        sed -i "s/{{ *$1 *}}/$value/g" $dockerDir/conf/$container/conf.d/default.conf
+    if [ -f conf/$container/conf.d/default.conf ]; then
+        sed -i "s/{{ *$1 *}}/$value/g" conf/$container/conf.d/default.conf
     fi
 
     echo "$value"
 }
 
-function skyflowNginxFinish()
+function skyflowDockerOnContainerFinish()
 {
-
+    dockerHelperOnContainerFinish
 }
-
-case $1 in
-    "init")
-        skyflowNginxInit
-    ;;
-    "beforeWrite")
-        skyflowNginxBeforeWrite "$2" "$3"
-    ;;
-    "finish")
-        skyflowNginxFinish
-    ;;
-esac
-
-exit 0

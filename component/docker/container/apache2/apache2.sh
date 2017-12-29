@@ -1,16 +1,16 @@
 #! /bin/sh
 
-function skyflowGetFromIni()
-{
-    $SKYFLOW_DIR/helper.sh "getFromIni" "$1" "$2"
-}
+#source ././../../../../helper.sh
+source $HOME/.skyflow/helper.sh
 
-# =======================================
+#source ././../../helper.sh
+source $HOME/.skyflow/component/docker/helper.sh
 
-function skyflowApache2Init()
+function skyflowDockerOnContainerInit()
 {
-    local container=$CURRENT_CONTAINER
-    local dockerDir=$SKYFLOW_DIR/component/docker
+    local container=apache2
+
+    cp -r $SKYFLOW_DOCKER_DIR/conf/$container/default conf/$container
 
     export PS3="Select your php version : "
     select php in 5 7 none
@@ -18,36 +18,34 @@ function skyflowApache2Init()
         case $php in
           5|7)
 
-            if [ -d $dockerDir/conf/php$php ]; then
-                cp -r $dockerDir/conf/php$php conf/php$php
-                if [ -f conf/php$php/conf.d/.gitignore ]; then
-                    rm conf/php$php/conf.d/.gitignore
-                fi
+            # Copy php configuration files
+            cp -r $SKYFLOW_DOCKER_DIR/conf/php conf/php
+#            if [ -f conf/php/conf.d/.gitignore ]; then
+#                rm conf/php/conf.d/.gitignore
+#            fi
+
+            cp -r $SKYFLOW_DOCKER_DIR/extra/php extra/php
+            if [ -f extra/php/modules/.gitignore ]; then
+                rm extra/php/modules/.gitignore
             fi
 
-            if [ -d $dockerDir/extra/php$php ]; then
-                cp -r $dockerDir/extra/php$php extra/php$php
-                if [ -f extra/php$php/modules/.gitignore ]; then
-                    rm extra/php$php/modules/.gitignore
-                fi
+            # Copy container configuration according to php version
+            if [ -f $SKYFLOW_DOCKER_DIR/conf/$container/php/conf.d/php$php-module.conf ]; then
+                cp $SKYFLOW_DOCKER_DIR/conf/$container/php/conf.d/php$php-module.conf conf/$container/conf.d/php$php-module.conf
             fi
 
-            # Set container configuration according to php version
-            if [ -d $dockerDir/conf/$container/php$php ]; then
-                cp -r $dockerDir/conf/$container/php$php conf/$container
-            fi
-            if [ -d $dockerDir/container/$container/php ]; then
-                cp $dockerDir/container/$container/php/* ./
+            # Copy docker files configuration according to php version
+            if [ -d $SKYFLOW_DOCKER_DIR/container/$container/php ]; then
+                cp $SKYFLOW_DOCKER_DIR/container/$container/php/* ./
             fi
             break
           ;;
           none)
-            cp -r $dockerDir/conf/$container/default conf/$container
-            cp $dockerDir/container/$container/default/* ./
+            cp $SKYFLOW_DOCKER_DIR/container/$container/default/* ./
             break
           ;;
           *)
-            $SKYFLOW_DIR/helper.sh "printError" "Invalid selection"
+            skyflowHelperPrintError "Invalid selection"
           ;;
         esac
     done
@@ -63,7 +61,7 @@ function skyflowApache2Init()
 
 }
 
-function skyflowApache2BeforeWrite()
+function skyflowDockerOnContainerProgress()
 {
     if [ "$1" == "application.name" ]; then
         # Lower upper
@@ -74,48 +72,8 @@ function skyflowApache2BeforeWrite()
     echo "$2"
 }
 
-function skyflowApache2Finish()
+
+function skyflowDockerOnContainerFinish()
 {
-    local applicationName=$(skyflowGetFromIni "docker.ini" "application.name")
-    local serverName=$(skyflowGetFromIni "docker.ini" "server.name")
-    local directoryIndex=$(skyflowGetFromIni "docker.ini" "directory.index")
-    local documentRoot=$(skyflowGetFromIni "docker.ini" "document.root")
-    local containerPort=$(skyflowGetFromIni "docker.ini" "container.port")
-
-    # Create document root and directory index
-    if [ "$documentRoot" != "." ] && [ ! -d ../$documentRoot ]; then
-        mkdir ../$documentRoot
-        $SKYFLOW_DIR/helper.sh "printSuccess" "'$documentRoot' directory was created."
-    fi
-
-    if [ "$documentRoot" == "." ] && [ ! -f ../$directoryIndex ]; then
-        touch ../$directoryIndex
-        echo "<h1>$applicationName application is ready!</h1>" >> ../$directoryIndex
-        $SKYFLOW_DIR/helper.sh "printSuccess" "'$directoryIndex' file was created."
-    fi
-
-    if [ "$directoryIndex" != "." ] && [ ! -f ../$documentRoot/$directoryIndex ]; then
-        touch ../$documentRoot/$directoryIndex
-        echo "<h1>$applicationName application is ready!</h1>" >> ../$documentRoot/$directoryIndex
-        $SKYFLOW_DIR/helper.sh "printSuccess" "'$documentRoot/$directoryIndex' file was created."
-    fi
-
-    # Add server name to hosts file
-    sudo sh -c "echo -e 127.0.0.1    $serverName >> /etc/hosts"
-    $SKYFLOW_DIR/helper.sh "printSuccess" "'$serverName' added to your hosts file."
-    echo -e "\033[0;94mAfter 'skyflow-docker up' command, go to \033[4;94m$serverName:$containerPort\033[0m"
+    dockerHelperOnContainerFinish
 }
-
-case $1 in
-    "init")
-        skyflowApache2Init
-    ;;
-    "beforeWrite")
-        skyflowApache2BeforeWrite "$2" "$3"
-    ;;
-    "finish")
-        skyflowApache2Finish
-    ;;
-esac
-
-exit 0

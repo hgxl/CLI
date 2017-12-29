@@ -5,8 +5,8 @@ if [ "$USER" == "root" ]; then
     exit 1
 fi
 
-source ./helper.sh
-#source $HOME/.skyflow/helper.sh
+#source ./helper.sh
+source $HOME/.skyflow/helper.sh
 
 author="Skyflow Team - Franck Diomandé <fkdiomande@gmail.com>"
 versionMessage="Skyflow CLI version $SKYFLOW_VERSION"
@@ -44,9 +44,9 @@ function skyflowInit()
         cp $SKYFLOW_CACHE_DIR/helper.sh $SKYFLOW_DIR/helper.sh
     fi
 
-    if [ ! -x $SKYFLOW_DIR/helper.sh ]; then
-	    sudo chmod +x $SKYFLOW_DIR/helper.sh
-    fi
+#    if [ ! -x $SKYFLOW_DIR/helper.sh ]; then
+#	    sudo chmod +x $SKYFLOW_DIR/helper.sh
+#    fi
 }
 
 function skyflowInstall()
@@ -100,7 +100,7 @@ function skyflowRemove()
 
 function skyflowList()
 {
-    cd $SKYFLOW_DIR/component
+    cd $SKYFLOW_CACHE_DIR/component
     count=0;
 
     echo

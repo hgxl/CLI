@@ -5,8 +5,11 @@ if [ "$USER" == "root" ]; then
     exit 1
 fi
 
-export SKYFLOW_DIR=$HOME/.skyflow
-export SKYFLOW_DOCKER_VERSION="1.0.0"
+#source ./helper.sh
+source $HOME/.skyflow/helper.sh
+
+#source ./component/docker/helper.sh
+source $HOME/.skyflow/component/docker/helper.sh
 
 author="Skyflow Team - Franck Diomandé <fkdiomande@gmail.com>"
 versionMessage="Skyflow Docker CLI version $SKYFLOW_DOCKER_VERSION"
@@ -16,14 +19,9 @@ playbook=1
 CWD=$PWD
 
 # Todo: Create new group and add current user and apache and docker
-# Todo: Can not access to application by localhost
+# Todo: Can not access to application by localhost for apache2
 
 # =======================================
-
-function skyflowRunCommand()
-{
-    $SKYFLOW_DIR/helper.sh "runCommand" "$1"
-}
 
 function findDockerComposeFile()
 {
@@ -32,19 +30,9 @@ function findDockerComposeFile()
         fi
 
         if [ ! -f docker-compose.yml ]; then
-            $SKYFLOW_DIR/helper.sh "printError" "docker-compose.yml file not found"
+            skyflowHelperPrintError "docker-compose.yml file not found"
             exit 1
         fi
-}
-
-function skyflowTrim()
-{
-    $SKYFLOW_DIR/helper.sh "trim" "$1" "$2"
-}
-
-function skyflowGetFromIni()
-{
-    $SKYFLOW_DIR/helper.sh "getFromIni" "$1" "$2"
 }
 
 # =======================================
@@ -52,7 +40,7 @@ function skyflowGetFromIni()
 function skyflowDockerInit()
 {
     if [ -d docker ] && test -z $1; then
-    	$SKYFLOW_DIR/helper.sh "printError" "docker directory already exists. Use -f option to continue"
+    	skyflowHelperPrintError "docker directory already exists. Use -f option to continue"
     	exit 1
 	fi
 	if [ -d docker ]; then
@@ -71,7 +59,7 @@ function skyflowDockerInit()
         if [ -d $container ]; then
             break
         fi
-        $SKYFLOW_DIR/helper.sh "printError" "Invalid selection"
+        skyflowHelperPrintError "Invalid selection"
     done
 
     export CURRENT_CONTAINER=$container
@@ -80,12 +68,16 @@ function skyflowDockerInit()
 
     cp $containerDir/$container/$container.ini docker.ini
 
-    if [ -f $containerDir/$container/$container.sh ]; then
-        if [ ! -x $containerDir/$container/$container.sh ]; then
-            sudo chmod +x $containerDir/$container/$container.sh
-        fi
-        $containerDir/$container/$container.sh "init"
-    fi
+    source $containerDir/$container/$container.sh
+
+    skyflowDockerOnContainerInit
+
+#    if [ -f $containerDir/$container/$container.sh ]; then
+#        if [ ! -x $containerDir/$container/$container.sh ]; then
+#            sudo chmod +x $containerDir/$container/$container.sh
+#        fi
+#        $containerDir/$container/$container.sh "init"
+#    fi
 
     while read -u3 line
     do
@@ -107,9 +99,11 @@ function skyflowDockerInit()
 
 	    echo -e "\033[0;92m✓ $newValue\033[0m"
 
-	    if [ -f $containerDir/$container/$container.sh ]; then
-            newValue=$($containerDir/$container/$container.sh "beforeWrite" "$key" "$newValue")
-        fi
+	    newValue=$(skyflowDockerOnContainerProgress "$key" "$newValue")
+
+#	    if [ -f $containerDir/$container/$container.sh ]; then
+#            newValue=$($containerDir/$container/$container.sh "beforeWrite" "$key" "$newValue")
+#        fi
 
         if [ -f Dockerfile ]; then
             sed -i "s/{{ *$key *}}/$newValue/g" Dockerfile
@@ -122,28 +116,30 @@ function skyflowDockerInit()
 
     done 3< docker.ini
 
-    if [ -f $containerDir/$container/$container.sh ]; then
-        $containerDir/$container/$container.sh "finish"
-    fi
+    skyflowDockerOnContainerFinish
 
-    $SKYFLOW_DIR/helper.sh "printSuccess" "Your docker environment is ready! Run 'skyflow-docker up' command to up your environment"
+#    if [ -f $containerDir/$container/$container.sh ]; then
+#        $containerDir/$container/$container.sh "finish"
+#    fi
+
+    skyflowHelperPrintSuccess "Your docker environment is ready! Run 'skyflow-docker up' command to up your environment"
 }
 
 function skyflowDockerUp()
 {
     findDockerComposeFile
-    skyflowRunCommand "docker-compose up --build -d"
+    skyflowHelperRunCommand "docker-compose up --build -d"
 }
 
 function skyflowDockerLs()
 {
     # Trim : Remove last 's' char
     input=$1
-    input=$(skyflowTrim $input "s")
+    input=$(skyflowHelperTrim $input "s")
 
     case $input in
         "image"|"container")
-            skyflowRunCommand "docker $input ls -a"
+            skyflowHelperRunCommand "docker $input ls -a"
         ;;
         "compose")
             cd $SKYFLOW_DIR/component/docker/compose
@@ -164,7 +160,7 @@ function skyflowDockerLs()
             echo
         ;;
         *)
-            skyflowRunCommand "docker container ls -a"
+            skyflowHelperRunCommand "docker container ls -a"
         ;;
     esac
 }
@@ -173,13 +169,13 @@ function skyflowDockerRm()
 {
     # Trim : Remove last 's' char
     input=$1
-    input=$(skyflowTrim $input "s")
+    input=$(skyflowHelperTrim $input "s")
 
     if test -z $input; then
         input="container"
     fi
 
-    skyflowRunCommand "docker $input rm $(docker $input ls -a -q) -f"
+    skyflowHelperRunCommand "docker $input rm $(docker $input ls -a -q) -f"
 }
 
 function skyflowDockerUseCompose()
@@ -187,7 +183,7 @@ function skyflowDockerUseCompose()
     local compose=$1
     local dockerDir=$SKYFLOW_DIR/component/docker
     if [ ! -f $dockerDir/compose/$compose.yml ]; then
-        $SKYFLOW_DIR/helper.sh "printError" "Compose '$compose' not found. Use 'skyflow-docker ls compose' command"
+        skyflowHelperPrintError "Compose '$compose' not found. Use 'skyflow-docker ls compose' command"
         exit 1
     fi
 
@@ -277,7 +273,7 @@ function skyflowExecContainer()
             fi
         ;;
         *)
-            $SKYFLOW_DIR/helper.sh "printError" "'$fullCommand' command not found"
+            skyflowHelperPrintError "'$fullCommand' command not found"
             exit 1
         ;;
     esac
@@ -292,9 +288,9 @@ function skyflowExecContainer()
             fi
             echo "$container:$command $args" >> playbook
         fi
-        $SKYFLOW_DIR/helper.sh "printSuccess" "docker-compose exec $container $fullCommand"
+        skyflowHelperPrintSuccess "docker-compose exec $container $fullCommand"
     else
-        $SKYFLOW_DIR/helper.sh "printError" "Failed to execute '$fullCommand' command in '$container' container"
+        skyflowHelperPrintError "Failed to execute '$fullCommand' command in '$container' container"
     fi
 }
 
@@ -304,7 +300,7 @@ function skyflowPlaybook()
     findDockerComposeFile
 
     if [ ! -f playbook ]; then
-        $SKYFLOW_DIR/helper.sh "printInfo" "No playbook recorded!"
+        skyflowHelperPrintInfo "No playbook recorded!"
         exit 0
     fi
 
@@ -322,10 +318,10 @@ function skyflowPlaybook()
 
 case $1 in
     "-h"|"--help")
-        $SKYFLOW_DIR/helper.sh "-h" "Skyflow Docker CLI" "$author" "$docFile"
+        skyflowHelperPrintHelp "Skyflow Docker CLI" "$author" "$docFile"
     ;;
     "-v"|"--version")
-        $SKYFLOW_DIR/helper.sh "-v" "$versionMessage" "$author"
+        skyflowHelperPrintVersion "$versionMessage" "$author"
     ;;
     "init"|"create")
         skyflowDockerInit "$2"
@@ -352,7 +348,7 @@ case $1 in
             skyflowExecContainer "$1" "$2"
             exit 0
         fi
-        skyflowRunCommand "docker-compose $1"
+        skyflowHelperRunCommand "docker-compose $1"
     ;;
 esac
 

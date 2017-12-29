@@ -5,16 +5,25 @@ export SKYFLOW_CACHE_DIR=$SKYFLOW_DIR/.cache
 export SKYFLOW_VERSION="1.0.0"
 export SKYFLOW_GITHUB_URL="https://github.com/franckdiomande/Skyflow-cli.git"
 
+# Print skyflow formatted error message
+# Arguments:
+# - $1 : Message
 function skyflowHelperPrintError()
 {
     echo -e "\033[0;31mSkyflow error: $1\033[0m"
 }
 
+# Print skyflow formatted success message
+# Arguments:
+# - $1 : Message
 function skyflowHelperPrintSuccess()
 {
     echo -e "\033[0;92m✓ $1\033[0m"
 }
 
+# Print skyflow formatted info message
+# Arguments:
+# - $1 : Message
 function skyflowHelperPrintInfo()
 {
     echo -e "\033[0;94m$1\033[0m"
