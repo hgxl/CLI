@@ -21,22 +21,6 @@ CWD=$PWD
 # Todo: Create new group and add current user and apache and docker
 # Todo: Can not access to application by localhost for apache2
 
-# =======================================
-
-function findDockerComposeFile()
-{
-        if [ -d docker ] && [ ! -f docker-compose.yml ]; then
-            cd docker
-        fi
-
-        if [ ! -f docker-compose.yml ]; then
-            skyflowHelperPrintError "docker-compose.yml file not found"
-            exit 1
-        fi
-}
-
-# =======================================
-
 function skyflowDockerInit()
 {
     if [ -d docker ] && test -z $1; then
@@ -72,13 +56,6 @@ function skyflowDockerInit()
 
     skyflowDockerOnContainerInit
 
-#    if [ -f $containerDir/$container/$container.sh ]; then
-#        if [ ! -x $containerDir/$container/$container.sh ]; then
-#            sudo chmod +x $containerDir/$container/$container.sh
-#        fi
-#        $containerDir/$container/$container.sh "init"
-#    fi
-
     while read -u3 line
     do
         # First char
@@ -101,10 +78,6 @@ function skyflowDockerInit()
 
 	    newValue=$(skyflowDockerOnContainerProgress "$key" "$newValue")
 
-#	    if [ -f $containerDir/$container/$container.sh ]; then
-#            newValue=$($containerDir/$container/$container.sh "beforeWrite" "$key" "$newValue")
-#        fi
-
         if [ -f Dockerfile ]; then
             sed -i "s/{{ *$key *}}/$newValue/g" Dockerfile
         fi
@@ -117,10 +90,6 @@ function skyflowDockerInit()
     done 3< docker.ini
 
     skyflowDockerOnContainerFinish
-
-#    if [ -f $containerDir/$container/$container.sh ]; then
-#        $containerDir/$container/$container.sh "finish"
-#    fi
 
     skyflowHelperPrintSuccess "Your docker environment is ready! Run 'skyflow-docker up' command to up your environment"
 }

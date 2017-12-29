@@ -32,7 +32,7 @@ function skyflowInit()
     fi
 
     if [ ! -d $SKYFLOW_CACHE_DIR ]; then
-    	git clone $SKYFLOW_GITHUB_URL $SKYFLOW_CACHE_DIR
+    	git clone $SKYFLOW_GITHUB_URL --depth=1 $SKYFLOW_CACHE_DIR
     	rm -rf $SKYFLOW_CACHE_DIR/.git
 	fi
 
@@ -44,9 +44,6 @@ function skyflowInit()
         cp $SKYFLOW_CACHE_DIR/helper.sh $SKYFLOW_DIR/helper.sh
     fi
 
-#    if [ ! -x $SKYFLOW_DIR/helper.sh ]; then
-#	    sudo chmod +x $SKYFLOW_DIR/helper.sh
-#    fi
 }
 
 function skyflowInstall()

@@ -6,6 +6,18 @@ source $HOME/.skyflow/helper.sh
 export SKYFLOW_DOCKER_VERSION="1.0.0"
 export SKYFLOW_DOCKER_DIR=$SKYFLOW_DIR/component/docker
 
+function findDockerComposeFile()
+{
+        if [ -d docker ] && [ ! -f docker-compose.yml ]; then
+            cd docker
+        fi
+
+        if [ ! -f docker-compose.yml ]; then
+            skyflowHelperPrintError "docker-compose.yml file not found"
+            exit 1
+        fi
+}
+
 #
 # This function uses docker.ini information to:
 # - create document root directory
