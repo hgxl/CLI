@@ -1,9 +1,11 @@
     {{ container.name }}:
         container_name: {{ container.name }}
-        image: php:{{ image.version }}
+        image: php:{{ version }}-fpm-alpine
         working_dir: /var/www/app
         restart: always
         volumes:
-            - {{ application.dir }}:/var/www/app
+            - ..:/var/www/app
+            - ./conf/php:/etc/php{{ version }}
+            - ./extra/php:/usr/lib/php{{ version }}
         ports:
             {{ port }}:9000

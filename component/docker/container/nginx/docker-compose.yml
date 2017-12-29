@@ -4,7 +4,7 @@ services:
 
     {{ application.name }}:
         container_name: {{ application.name }}
-        image: nginx:{{ image.version }}
+        image: nginx:alpine
         working_dir: /var/www/{{ application.name }}
         restart: always
         volumes:
@@ -19,10 +19,12 @@ services:
 
     {{ php.container.name }}:
         container_name: {{ php.container.name }}
-        image: php:{{ php.image.version }}
+        image: php:{{ php.version }}-fpm-alpine
         working_dir: /var/www/{{ application.name }}
         restart: always
         volumes:
             - ..:/var/www/{{ application.name }}
+            - ./conf/php:/etc/php{{ php.version }}
+            - ./extra/php:/usr/lib/php{{ php.version }}
         ports:
             - {{ php.port }}:9000

@@ -26,6 +26,12 @@ function skyflowDockerOnContainerInit()
         rm conf/php/conf.d/.gitignore
     fi
 
+    # Copy extra configuration files
+    cp -r $SKYFLOW_DOCKER_DIR/extra/php extra/php
+    if [ -f extra/php/modules/.gitignore ]; then
+        rm extra/php/modules/.gitignore
+    fi
+
 }
 
 function skyflowDockerOnContainerProgress()
