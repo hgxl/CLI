@@ -1,6 +1,6 @@
     {{ container.name }}:
         container_name: {{ container.name }}
-        image: redis:{{ image.version }}
+        image: redis:alpine
         restart: always
         volumes:
             - {{ database.storage.location }}:/data

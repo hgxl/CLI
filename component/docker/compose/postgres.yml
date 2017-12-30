@@ -1,6 +1,6 @@
     {{ container.name }}:
         container_name: {{ container.name }}
-        image: postgres:{{ image.version }}
+        image: postgres:alpine
         restart: always
         environment:
             POSTGRES_USER: {{ user }}

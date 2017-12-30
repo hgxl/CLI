@@ -1,6 +1,6 @@
     {{ container.name }}:
         container_name: {{ container.name }}
-        image: node:{{ image.version }}
+        image: node:{{ image.version }}-alpine
         user: {{ user }}
         working_dir: /home/{{ user }}/app
         restart: always

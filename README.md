@@ -49,7 +49,7 @@ skyflow -h
 
 #### Components
 
-###### _Update component list_
+###### _Update components list_
 ```bash
 skyflow update
 ```
