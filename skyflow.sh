@@ -101,7 +101,7 @@ function skyflowList()
     count=0;
 
     echo
-    echo -e "\033[0;96mSkyflow components:\033[0m"
+    echo -e "\033[0;96mSkyflow CLI components:\033[0m"
     start=1
     end=25
     for ((i=$start; i<=$end; i++)); do echo -n -e "\033[0;96m-\033[0m"; done

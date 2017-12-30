@@ -52,7 +52,6 @@ function skyflowHelperGetFromIni()
 {
     content=$(cat $1)
     value=`expr match "$content" ".*$2 *= *\([a-zA-Z0-9_@\.-'\"]*\)"`
-#    value=`expr match "$content" "$2 *= *\(.*\)"`
     value=$(skyflowHelperTrim $value " /")
     echo -e "$value"
 }
@@ -87,9 +86,11 @@ function skyflowHelperPrintHelp()
 
         # Length
         len=${#key}
-        echo -n -e "\033[0;35m$key\033[0m"
+#        echo -n -e "\033[0;35m$key\033[0m"
+        echo -n -e "$key"
         for ((i=1; i<=35-$len; i++)); do echo -n " "; done
-        echo -n -e "\033[0;30m$value\033[0m"
+        echo -n -e "$value"
+#        echo -n -e "\033[0;30m$value\033[0m"
         echo
     done < $3
 
