@@ -1,6 +1,6 @@
 FROM alpine:3.6
 
-MAINTAINER Skyflow Team - Franck Diomandé 'fkdiomande@gmail.com'
+LABEL maintainer="Skyflow Team - Franck Diomandé <fkdiomande@gmail.com>"
 
 ARG APPLICATION_NAME={{ application.name }}
 ARG SERVER_NAME={{ server.name }}
