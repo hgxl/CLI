@@ -1,7 +1,7 @@
     {{ container.name }}:
         container_name: {{ container.name }}
         image: composer
-        volume:
+        volumes:
             - ..:/app
         # Uncomment the line below if you want to run the 'composer update' command when the container starts.
         #command: ["composer", "update"]
