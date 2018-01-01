@@ -5,8 +5,8 @@
         volumes:
             - ./conf/phpmyadmin:/etc/phpmyadmin
         environment:
-            PMA_USER={{ user }}
-            PMA_PASSWORD={{ password }}
+            PMA_USER: {{ user }}
+            PMA_PASSWORD: {{ password }}
         ports:
             - {{ port }}:80
         links:
