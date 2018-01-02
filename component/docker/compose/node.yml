@@ -1,11 +1,11 @@
     {{ container.name }}:
         container_name: {{ container.name }}
         image: node:{{ image.version }}-alpine
-        user: {{ user }}
-        working_dir: /home/{{ user }}/app
+        user: "node"
+        working_dir: /home/node/app
         restart: always
         volumes:
-            - {{ application.dir }}:/home/{{ user }}/app
+            - {{ application.dir }}:/home/node/app
         environment:
             NODE_ENV: {{ env }}
         expose:

@@ -97,7 +97,7 @@ function skyflowDockerInit()
 function skyflowDockerUp()
 {
     findDockerComposeFile
-    skyflowHelperRunCommand "docker-compose up --build -d"
+    docker-compose up --build -d
 }
 
 function skyflowDockerLs()
