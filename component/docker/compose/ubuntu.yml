@@ -1,7 +1,9 @@
     {{ container.name }}:
         container_name: {{ container.name }}
         image: ubuntu:{{ image.version }}
-        working_dir: {{ application.dir }}
+        working_dir: /var/www/{{ container.name }}
         restart: always
+        volumes:
+            - {{ application.dir }}:/var/www/{{ container.name }}
         # Comment this line if you don't want to keep container running
         command: "tail -f /dev/null"
