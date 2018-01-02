@@ -16,7 +16,7 @@ Installation
 ###### _With curl_
 
 ```bash
-curl -s -o skyflow.sh https://raw.githubusercontent.com/franckdiomande/Skyflow-cli/master/skyflow.sh
+curl -s https://raw.githubusercontent.com/franckdiomande/Skyflow-cli/master/skyflow.sh -o skyflow.sh
 ```
 
 ```bash
@@ -120,5 +120,4 @@ The **`skyflow.sh`** file is the skyflow command line.
 
 [1]: http://hub.skyflow.io:8080
 [2]: https://raw.githubusercontent.com/franckdiomande/Skyflow-cli/master/skyflow.sh
-
 [3]: https://github.com/franckdiomande/Skyflow-cli/blob/master/component/docker/README.md
