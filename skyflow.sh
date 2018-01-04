@@ -5,8 +5,10 @@ if [ "$USER" == "root" ]; then
     exit 1
 fi
 
-#source ./helper.sh
-source $HOME/.skyflow/helper.sh
+export SKYFLOW_DIR=$HOME/.skyflow
+export SKYFLOW_CACHE_DIR=$SKYFLOW_DIR/.cache
+export SKYFLOW_VERSION="1.0.0"
+export SKYFLOW_GITHUB_URL="https://github.com/franckdiomande/Skyflow-cli.git"
 
 author="Skyflow Team - Franck Diomandé <fkdiomande@gmail.com>"
 versionMessage="Skyflow CLI version $SKYFLOW_VERSION"
@@ -45,6 +47,11 @@ function skyflowInit()
     fi
 
 }
+
+skyflowInit
+
+#source ./helper.sh
+source $HOME/.skyflow/helper.sh
 
 function skyflowInstall()
 {
@@ -114,8 +121,6 @@ function skyflowList()
     done
     echo
 }
-
-skyflowInit
 
 case $1 in
     "install")
