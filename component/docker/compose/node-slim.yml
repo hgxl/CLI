@@ -1,6 +1,6 @@
     {{ container.name }}:
         container_name: {{ container.name }}
-        build: ./conf/gulp
+        build: ./conf/node-slim
         working_dir: /var/www/{{ container.name }}
         restart: always
         volumes:
