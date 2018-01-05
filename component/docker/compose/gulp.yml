@@ -1,0 +1,7 @@
+    {{ container.name }}:
+        container_name: {{ container.name }}
+        build: ./conf/gulp
+        working_dir: /var/www/{{ container.name }}
+        restart: always
+        volumes:
+            - {{ application.dir }}:/var/www/{{ container.name }}

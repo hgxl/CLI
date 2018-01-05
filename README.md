@@ -16,15 +16,11 @@ Installation
 ###### _With curl_
 
 ```bash
-curl -s https://raw.githubusercontent.com/franckdiomande/Skyflow-cli/master/skyflow.sh -o skyflow.sh
+sudo curl -s https://raw.githubusercontent.com/franckdiomande/Skyflow-cli/master/skyflow.sh -o /usr/local/bin/skyflow
 ```
 
 ```bash
-sudo mv skyflow.sh /usr/bin/skyflow
-```
-
-```bash
-sudo chmod +x /usr/bin/skyflow
+sudo chmod +x /usr/local/bin/skyflow
 ```
 
 ###### _Manually_

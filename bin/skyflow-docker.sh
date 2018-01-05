@@ -162,6 +162,14 @@ function skyflowDockerUseCompose()
     local composeContent=`cat $dockerDir/compose/$compose.yml`
     echo -e "\n$composeContent" >> docker-compose.yml
 
+    if [ -d $dockerDir/conf/$compose ] && [ ! -d conf/$compose ]; then
+        cp -r $dockerDir/conf/$compose conf/$compose
+    fi
+
+    if [ -d $dockerDir/extra/$compose ] && [ ! -d extra/$compose ]; then
+        cp -r $dockerDir/extra/$compose extra/$compose
+    fi
+
     while read -u3 line
     do
         # First char
@@ -188,16 +196,12 @@ function skyflowDockerUseCompose()
         if [ -f docker-compose.yml ]; then
             sed -i "s#{{ *$key *}}#$newValue#g" docker-compose.yml
         fi
+        if [ -f conf/$compose/Dockerfile ]; then
+            sed -i "s#{{ *$key *}}#$newValue#g" conf/$compose/Dockerfile
+        fi
 
     done 3< $dockerDir/compose/$compose.ini
-
-    if [ -d $dockerDir/conf/$compose ] && [ ! -d conf/$compose ]; then
-        cp -r $dockerDir/conf/$compose conf/$compose
-    fi
-
-    if [ -d $dockerDir/extra/$compose ] && [ ! -d extra/$compose ]; then
-        cp -r $dockerDir/extra/$compose extra/$compose
-    fi
+    
 }
 
 function skyflowExecContainer()

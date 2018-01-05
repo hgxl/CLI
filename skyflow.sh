@@ -64,7 +64,7 @@ function skyflowInstall()
 	fi
 
 	# Exit if component already exists
-    if [ -d $SKYFLOW_DIR/component/$1 ] && [ -f /usr/bin/skyflow-$1 ]; then
+    if [ -d $SKYFLOW_DIR/component/$1 ] && [ -f /usr/local/bin/skyflow-$1 ]; then
     	skyflowHelperPrintInfo "$1 component is already installed"
     	exit 0
 	fi
@@ -73,8 +73,8 @@ function skyflowInstall()
 	cp -R $componentCacheDir $SKYFLOW_DIR/component/$1
 
     # Install binary
-    sudo cp $SKYFLOW_CACHE_DIR/bin/skyflow-$1.sh /usr/bin/skyflow-$1
-    sudo chmod +x /usr/bin/skyflow-$1
+    sudo cp $SKYFLOW_CACHE_DIR/bin/skyflow-$1.sh /usr/local/bin/skyflow-$1
+    sudo chmod +x /usr/local/bin/skyflow-$1
 
     skyflowHelperPrintSuccess "$1 component was successfully installed! Now you can use \033[4;94mskyflow-$1\033[0;92m CLI"
     exit 0
@@ -94,8 +94,8 @@ function skyflowRemove()
     	rm -rf $SKYFLOW_DIR/component/$1
 	fi
 
-	if [ -f /usr/bin/skyflow-$1 ]; then
-    	sudo rm /usr/bin/skyflow-$1
+	if [ -f /usr/local/bin/skyflow-$1 ]; then
+    	sudo rm /usr/local/bin/skyflow-$1
 	fi
 
     skyflowHelperPrintSuccess "$1 component was successfully removed!"
