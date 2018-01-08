@@ -5,10 +5,7 @@ if [ "$USER" == "root" ]; then
     exit 1
 fi
 
-export SKYFLOW_DIR=$HOME/.skyflow
-export SKYFLOW_CACHE_DIR=$SKYFLOW_DIR/.cache
-export SKYFLOW_VERSION="1.0.0"
-export SKYFLOW_GITHUB_URL="https://github.com/franckdiomande/Skyflow-cli.git"
+source ./helper.sh
 
 author="Skyflow Team - Franck Diomandé <fkdiomande@gmail.com>"
 versionMessage="Skyflow CLI version $SKYFLOW_VERSION"
@@ -33,25 +30,17 @@ function skyflowInit()
         mkdir $SKYFLOW_DIR/component
     fi
 
-    if [ ! -d $SKYFLOW_CACHE_DIR ]; then
-    	git clone $SKYFLOW_GITHUB_URL --depth=1 $SKYFLOW_CACHE_DIR
-    	rm -rf $SKYFLOW_CACHE_DIR/.git
-	fi
-
     if [ ! -f $SKYFLOW_DIR/doc.ini ]; then
-        cp $SKYFLOW_CACHE_DIR/doc.ini $SKYFLOW_DIR/doc.ini
+        curl -s $SKYFLOW_GITHUB_CONTENT/doc.ini -o $SKYFLOW_DIR/doc.ini
     fi
 
     if [ ! -f $SKYFLOW_DIR/helper.sh ]; then
-        cp $SKYFLOW_CACHE_DIR/helper.sh $SKYFLOW_DIR/helper.sh
+        curl -s $SKYFLOW_GITHUB_CONTENT/helper.sh -o $SKYFLOW_DIR/helper.sh
     fi
 
 }
 
 skyflowInit
-
-#source ./helper.sh
-source $HOME/.skyflow/helper.sh
 
 function skyflowInstall()
 {
