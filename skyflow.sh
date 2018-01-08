@@ -5,6 +5,8 @@ if [ "$USER" == "root" ]; then
     exit 1
 fi
 
+export SKYFLOW_GITHUB_CONTENT="https://raw.githubusercontent.com/franckdiomande/Skyflow-cli/master"
+
 function skyflowInit()
 {
     case $1 in
@@ -25,21 +27,20 @@ function skyflowInit()
     fi
 
     if [ ! -f $HOME/.skyflow/doc.ini ]; then
-        curl -s $SKYFLOW_GITHUB_CONTENT/doc.ini -o $HOME/.skyflow/doc.ini
+        curl -s "$SKYFLOW_GITHUB_CONTENT/doc.ini" -o $HOME/.skyflow/doc.ini
     fi
 
     if [ ! -f $HOME/.skyflow/helper.sh ]; then
-        curl -s $SKYFLOW_GITHUB_CONTENT/helper.sh -o $HOME/.skyflow/helper.sh
+        curl -s "$SKYFLOW_GITHUB_CONTENT/helper.sh" -o $HOME/.skyflow/helper.sh
     fi
 
     if [ ! -f $HOME/.skyflow/component.txt ]; then
-        curl -s $SKYFLOW_GITHUB_CONTENT/component.txt -o $HOME/.skyflow/component.txt
+        curl -s "$SKYFLOW_GITHUB_CONTENT/component.txt" -o $HOME/.skyflow/component.txt
     fi
 
 }
 
 skyflowInit
-
 
 #source ./helper.sh
 source $HOME/.skyflow/helper.sh
@@ -62,7 +63,10 @@ function skyflowInstall()
 	fi
 
     # Run install script
-#	cp -R $componentCacheDir $SKYFLOW_DIR/component/$1
+    mkdir $SKYFLOW_DIR/component/$1
+    curl -s $SKYFLOW_GITHUB_CONTENT/component/$1/install.sh -o $SKYFLOW_DIR/component/$1/install.sh
+    sudo chmod +x $SKYFLOW_DIR/component/$1/install.sh
+    rm $SKYFLOW_DIR/component/$1/install.sh
 
     # Install binary
     curl -s $SKYFLOW_GITHUB_CONTENT/bin/skyflow-$1.sh -o /usr/local/bin/skyflow-$1
@@ -74,13 +78,11 @@ function skyflowInstall()
 
 function skyflowRemove()
 {
-    componentCacheDir=$SKYFLOW_CACHE_DIR/component/$1
-
     # Check if component exists
-    if [ ! -d $componentCacheDir ] || test -z $1; then
-    	skyflowHelperPrintError "$1 component not found"
+    if [ ! grep -Fxq "$1" $SKYFLOW_DIR/component.txt ]; then
+        skyflowHelperPrintError "$1 component not found"
     	exit 1
-	fi
+    fi
 
     if [ -d $SKYFLOW_DIR/component/$1 ]; then
     	rm -rf $SKYFLOW_DIR/component/$1
@@ -96,22 +98,23 @@ function skyflowRemove()
 
 function skyflowList()
 {
-    cd $SKYFLOW_CACHE_DIR/component
     count=0;
-
-    echo
-    echo -e "\033[0;96mSkyflow CLI components:\033[0m"
+    printf "\n\033[0;96mSkyflow CLI components:\033[0m\n"
     start=1
     end=25
-    for ((i=$start; i<=$end; i++)); do echo -n -e "\033[0;96m-\033[0m"; done
-    echo
+    for ((i=$start; i<=$end; i++)); do printf "\033[0;96m-\033[0m"; done
+    printf "\n"
 
-    for compose in *
-    do
+    DONE=false
+    until $DONE; do
+        read compose || DONE=true
+
         count=$((count + 1))
-        echo -e "$count - \033[0;35m$compose\033[0m"
-    done
-    echo
+        printf "%s - \033[0;35m%s\033[0m\n" "$count" "$compose"
+
+    done < $SKYFLOW_DIR/component.txt
+
+    printf "\n"
 }
 
 case $1 in
@@ -121,7 +124,7 @@ case $1 in
     "remove")
         skyflowRemove "$2"
     ;;
-    "list")
+    "list|components")
         skyflowList
     ;;
     "init"|"update")

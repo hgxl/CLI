@@ -88,6 +88,7 @@ Contributing
     - component
         - docker
             - doc.ini
+            - install.sh
             - README.md
         - component1
             - doc.ini

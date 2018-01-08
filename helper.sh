@@ -92,7 +92,7 @@ function skyflowHelperPrintHelp()
         for ((i=1; i<=35-$len; i++)); do printf " "; done
         printf "%s\n" "$value"
     done < $3
-
+    printf "\n"
 }
 
 # Display version for command
