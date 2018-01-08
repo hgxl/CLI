@@ -5,7 +5,8 @@ if [ "$USER" == "root" ]; then
     exit 1
 fi
 
-source ./helper.sh
+#source ./helper.sh
+source $HOME/.skyflow/helper.sh
 
 author="Skyflow Team - Franck Diomandé <fkdiomande@gmail.com>"
 versionMessage="Skyflow CLI version $SKYFLOW_VERSION"
@@ -38,19 +39,28 @@ function skyflowInit()
         curl -s $SKYFLOW_GITHUB_CONTENT/helper.sh -o $SKYFLOW_DIR/helper.sh
     fi
 
+    if [ ! -f $SKYFLOW_DIR/component.txt ]; then
+        curl -s $SKYFLOW_GITHUB_CONTENT/component.txt -o $SKYFLOW_DIR/component.txt
+    fi
+
 }
 
 skyflowInit
 
 function skyflowInstall()
 {
-    componentCacheDir=$SKYFLOW_CACHE_DIR/component/$1
+#    componentCacheDir=$SKYFLOW_CACHE_DIR/component/$1
 
     # Check if component exists
-    if [ ! -d $componentCacheDir ] || test -z $1; then
-    	skyflowHelperPrintError "$1 component not found"
+#    if [ ! -d $componentCacheDir ] || test -z $1; then
+#    	skyflowHelperPrintError "$1 component not found"
+#    	exit 1
+#	fi
+
+	if [ ! grep -Fxq "$1" $SKYFLOW_DIR/component.txt ]; then
+        skyflowHelperPrintError "$1 component not found"
     	exit 1
-	fi
+    fi
 
 	# Exit if component already exists
     if [ -d $SKYFLOW_DIR/component/$1 ] && [ -f /usr/local/bin/skyflow-$1 ]; then
@@ -58,8 +68,8 @@ function skyflowInstall()
     	exit 0
 	fi
 
-    # Install component
-	cp -R $componentCacheDir $SKYFLOW_DIR/component/$1
+    # Run install script
+#	cp -R $componentCacheDir $SKYFLOW_DIR/component/$1
 
     # Install binary
     sudo cp $SKYFLOW_CACHE_DIR/bin/skyflow-$1.sh /usr/local/bin/skyflow-$1
