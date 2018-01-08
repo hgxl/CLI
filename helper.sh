@@ -19,7 +19,7 @@ function skyflowHelperPrintError()
 # - $1 : Message
 function skyflowHelperPrintSuccess()
 {
-    printf "\033[0;92m✓ %s\033[0m" "$1"
+    echo -e "\033[0;92m✓ $1\033[0m"
 }
 
 # Print skyflow formatted info message
@@ -27,7 +27,7 @@ function skyflowHelperPrintSuccess()
 # - $1 : Message
 function skyflowHelperPrintInfo()
 {
-    printf "\033[0;94m%s\033[0m" "$1"
+    echo -e "\033[0;94m$1\033[0m"
 }
 
 # Trim string

@@ -34,8 +34,8 @@ function skyflowInit()
         curl -s "$SKYFLOW_GITHUB_CONTENT/helper.sh" -o $HOME/.skyflow/helper.sh
     fi
 
-    if [ ! -f $HOME/.skyflow/component.txt ]; then
-        curl -s "$SKYFLOW_GITHUB_CONTENT/component.txt" -o $HOME/.skyflow/component.txt
+    if [ ! -f $HOME/.skyflow/components.txt ]; then
+        curl -s "$SKYFLOW_GITHUB_CONTENT/components.txt" -o $HOME/.skyflow/components.txt
     fi
 
 }
@@ -51,7 +51,8 @@ docFile="$SKYFLOW_DIR/doc.ini"
 
 function skyflowInstall()
 {
-	if [ ! grep -Fxq "$1" $SKYFLOW_DIR/component.txt ]; then
+	if ! grep -Fxq "$1" $SKYFLOW_DIR/components.txt
+	then
         skyflowHelperPrintError "$1 component not found"
     	exit 1
     fi
@@ -64,12 +65,13 @@ function skyflowInstall()
 
     # Run install script
     mkdir $SKYFLOW_DIR/component/$1
-    curl -s $SKYFLOW_GITHUB_CONTENT/component/$1/install.sh -o $SKYFLOW_DIR/component/$1/install.sh
+    curl -s "$SKYFLOW_GITHUB_CONTENT/component/$1/doc.ini" -o $SKYFLOW_DIR/component/$1/doc.ini
+    curl -s "$SKYFLOW_GITHUB_CONTENT/component/$1/install.sh" -o $SKYFLOW_DIR/component/$1/install.sh
     sudo chmod +x $SKYFLOW_DIR/component/$1/install.sh
     rm $SKYFLOW_DIR/component/$1/install.sh
 
     # Install binary
-    curl -s $SKYFLOW_GITHUB_CONTENT/bin/skyflow-$1.sh -o /usr/local/bin/skyflow-$1
+    sudo curl -s "$SKYFLOW_GITHUB_CONTENT/bin/skyflow-$1.sh" -o /usr/local/bin/skyflow-$1
     sudo chmod +x /usr/local/bin/skyflow-$1
 
     skyflowHelperPrintSuccess "$1 component was successfully installed! Now you can use \033[4;94mskyflow-$1\033[0;92m CLI"
@@ -79,7 +81,8 @@ function skyflowInstall()
 function skyflowRemove()
 {
     # Check if component exists
-    if [ ! grep -Fxq "$1" $SKYFLOW_DIR/component.txt ]; then
+    if ! grep -Fxq "$1" $SKYFLOW_DIR/components.txt
+    then
         skyflowHelperPrintError "$1 component not found"
     	exit 1
     fi
@@ -112,7 +115,7 @@ function skyflowList()
         count=$((count + 1))
         printf "%s - \033[0;35m%s\033[0m\n" "$count" "$compose"
 
-    done < $SKYFLOW_DIR/component.txt
+    done < $SKYFLOW_DIR/components.txt
 
     printf "\n"
 }
