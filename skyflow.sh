@@ -107,10 +107,10 @@ function skyflowList()
 
     DONE=false
     until $DONE; do
-        read compose || DONE=true
+        read component || DONE=true
 
         count=$((count + 1))
-        printf "%s - \033[0;35m%s\033[0m\n" "$count" "$compose"
+        printf "%s - \033[0;35m%s\033[0m\n" "$count" "$component"
 
     done < $SKYFLOW_DIR/component.ls
 

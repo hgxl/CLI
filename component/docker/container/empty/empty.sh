@@ -19,7 +19,7 @@ function skyflowDockerOnContainerInit()
 
 function skyflowDockerOnContainerProgress()
 {
-    echo "$2"
+    printf "%s" "$2"
 }
 
 function skyflowDockerOnContainerFinish()

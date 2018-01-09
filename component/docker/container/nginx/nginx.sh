@@ -22,15 +22,9 @@ function skyflowDockerOnContainerInit()
 
     # Copy php configuration files
     cp -r $SKYFLOW_DOCKER_DIR/conf/php conf/php
-    if [ -f conf/php/conf.d/.gitignore ]; then
-        rm conf/php/conf.d/.gitignore
-    fi
 
     # Copy extra configuration files
     cp -r $SKYFLOW_DOCKER_DIR/extra/php extra/php
-    if [ -f extra/php/modules/.gitignore ]; then
-        rm extra/php/modules/.gitignore
-    fi
 
 }
 
@@ -49,7 +43,7 @@ function skyflowDockerOnContainerProgress()
         sed -i "s/{{ *$1 *}}/$value/g" conf/$container/conf.d/default.conf
     fi
 
-    echo "$value"
+    printf "%s" "$value"
 }
 
 function skyflowDockerOnContainerFinish()

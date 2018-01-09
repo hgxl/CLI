@@ -86,7 +86,7 @@ function skyflowDockerInit()
     	    newValue=$value
 	    fi
 
-	    echo -e "\033[0;92m✓ $newValue\033[0m"
+	    printf "\033[0;92m✓ %s\033[0m" "$newValue"
 
 	    newValue=$(skyflowDockerOnContainerProgress "$key" "$newValue")
 
@@ -119,6 +119,7 @@ function skyflowDockerLs()
     input=$(skyflowHelperTrim $input "s")
 
     case $input in
+
         "image"|"container")
             skyflowHelperRunCommand "docker $input ls -a"
         ;;
@@ -126,19 +127,21 @@ function skyflowDockerLs()
             cd $SKYFLOW_DOCKER_DIR/compose
             count=0
 
-            echo
-            echo -e "\033[0;96mSkyflow docker compose:\033[0m"
-            start=1
-            end=30
-            for ((i=$start; i<=$end; i++)); do echo -n -e "\033[0;96m-\033[0m"; done
-            echo
+            printf "\n\033[0;96mSkyflow docker compose:\033[0m\n"
+            start=1; end=30
+            for ((i=$start; i<=$end; i++)); do printf "\033[0;96m-\033[0m"; done
+            printf "\n"
 
-            for compose in *.yml
-            do
+            DONE=false
+            until $DONE; do
+                read compose || DONE=true
+
                 count=$((count + 1))
-                echo -e "$count - \033[0;35m$compose\033[0m"
-            done
-            echo
+                printf "%s - \033[0;35m%s\033[0m\n" "$count" "$compose"
+
+            done < $SKYFLOW_DOCKER_DIR/list/compose.ls
+            printf "\n"
+
         ;;
         *)
             skyflowHelperRunCommand "docker container ls -a"

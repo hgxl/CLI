@@ -20,15 +20,9 @@ function skyflowDockerOnContainerInit()
 
             # Copy php configuration files
             cp -r $SKYFLOW_DOCKER_DIR/conf/php conf/php
-            if [ -f conf/php/conf.d/.gitignore ]; then
-                rm conf/php/conf.d/.gitignore
-            fi
 
             # Copy extra configuration files
             cp -r $SKYFLOW_DOCKER_DIR/extra/php extra/php
-            if [ -f extra/php/modules/.gitignore ]; then
-                rm extra/php/modules/.gitignore
-            fi
 
             # Copy container configuration according to php version
             if [ -f $SKYFLOW_DOCKER_DIR/conf/$container/php/conf.d/php$php-module.conf ]; then
@@ -70,7 +64,7 @@ function skyflowDockerOnContainerProgress()
         exit 0
     fi
 
-    echo "$2"
+    printf "%s" "$2"
 }
 
 function skyflowDockerOnContainerFinish()
