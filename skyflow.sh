@@ -8,6 +8,40 @@ fi
 export SKYFLOW_DIR=$HOME/.skyflow
 export SKYFLOW_GITHUB_CONTENT="https://raw.githubusercontent.com/franckdiomande/Skyflow-cli/master"
 
+# ===========>>>>>>>>>>>>>>> Local helper
+
+# Print skyflow curl failed formatted error message
+# Arguments:
+# - $1 : Message
+function skyflowHelperPrintCurlFailedError()
+{
+    echo -e "\033[0;31mSkyflow error: Can not find the file '$1'.\033[0m"
+    echo -e "\033[0;31mPlease check your internet connection and that the file exists.\033[0m"
+    exit 1
+}
+
+# Pull resources from remote
+# Arguments:
+# - $1 : Resource path
+# - $2 : Output directory
+function skyflowHelperPullFromRemote()
+{
+    skyflowHelperPrintInfo "Pulling '$1' from remote ..."
+    curl -s "$SKYFLOW_GITHUB_CONTENT/$1" -o $2
+    [ ! $? -eq 0 ] && skyflowHelperPrintCurlFailedError "$1"
+}
+
+# Print skyflow formatted info message
+# Arguments:
+# - $1 : Message
+function skyflowHelperPrintInfo()
+{
+    echo -e "\033[0;94m$1\033[0m"
+}
+
+# End local helper <<<<<<<<<<<===============
+
+
 function skyflowInit()
 {
     case $1 in

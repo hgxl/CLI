@@ -14,6 +14,9 @@ function skyflowHelperPrintError()
     echo -e "\033[0;31mSkyflow error: $1\033[0m"
 }
 
+# Print skyflow curl failed formatted error message
+# Arguments:
+# - $1 : Message
 function skyflowHelperPrintCurlFailedError()
 {
     echo -e "\033[0;31mSkyflow error: Can not find the file '$1'.\033[0m"
