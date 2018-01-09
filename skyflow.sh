@@ -24,14 +24,17 @@ function skyflowInit()
 
     if [ ! -f $SKYFLOW_DIR/doc.ini ]; then
         curl -s "$SKYFLOW_GITHUB_CONTENT/doc.ini" -o $SKYFLOW_DIR/doc.ini
+        [ ! $? -eq 0 ] && skyflowHelperPrintCurlFailedError "doc.ini"
     fi
 
     if [ ! -f $SKYFLOW_DIR/helper.sh ]; then
         curl -s "$SKYFLOW_GITHUB_CONTENT/helper.sh" -o $SKYFLOW_DIR/helper.sh
+        [ ! $? -eq 0 ] && skyflowHelperPrintCurlFailedError "helper.sh"
     fi
 
     if [ ! -f $SKYFLOW_DIR/component.ls ]; then
         curl -s "$SKYFLOW_GITHUB_CONTENT/component.ls" -o $SKYFLOW_DIR/component.ls
+        [ ! $? -eq 0 ] && skyflowHelperPrintCurlFailedError "component.ls"
     fi
 
 }
@@ -78,8 +81,7 @@ function skyflowInstall()
 function skyflowRemove()
 {
     # Check if component exists
-    if ! grep -Fxq "$1" $SKYFLOW_DIR/component.ls
-    then
+    if ! grep -Fxq "$1" $SKYFLOW_DIR/component.ls; then
         skyflowHelperPrintError "$1 component not found"
     	exit 1
     fi
@@ -124,7 +126,7 @@ case $1 in
     "remove")
         skyflowRemove "$2"
     ;;
-    "list|components")
+    "list"|"components")
         skyflowList
     ;;
     "init"|"update")

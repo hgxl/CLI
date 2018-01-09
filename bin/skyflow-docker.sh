@@ -34,9 +34,10 @@ function skyflowDockerInit()
     export PS3="Select your container : "
     select container in $(cat $SKYFLOW_DOCKER_DIR/list/container.ls)
     do
-        if [ -d $container ]; then
+        if grep -Fxq "$container" $SKYFLOW_DOCKER_DIR/list/container.ls; then
             break
         fi
+
         skyflowHelperPrintError "Invalid selection"
     done
 
@@ -49,6 +50,7 @@ function skyflowDockerInit()
             if [ ! -f $SKYFLOW_DOCKER_DIR/make/$element/$container.sh ]; then
                 mkdir -p $SKYFLOW_DOCKER_DIR/make/$element
                 curl -s "$SKYFLOW_GITHUB_CONTENT/component/docker/make/$element/$container.sh" -o $SKYFLOW_DOCKER_DIR/make/$element/$container.sh
+                [ ! $? -eq 0 ] && skyflowHelperPrintCurlFailedError "docker/make/$element/$container.sh"
                 sudo chmod +x $SKYFLOW_DOCKER_DIR/make/$element/$container.sh
             fi
             # Create directories and get files for selected container

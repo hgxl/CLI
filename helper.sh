@@ -14,6 +14,12 @@ function skyflowHelperPrintError()
     echo -e "\033[0;31mSkyflow error: $1\033[0m"
 }
 
+function skyflowHelperPrintCurlFailedError()
+{
+    echo -e "\033[0;31mSkyflow error: Can't pull '$1' from remote\033[0m"
+    exit 1
+}
+
 # Print skyflow formatted success message
 # Arguments:
 # - $1 : Message
@@ -91,7 +97,9 @@ function skyflowHelperPrintHelp()
         printf "%s" "$key"
         for ((i=1; i<=35-$len; i++)); do printf " "; done
         printf "%s\n" "$value"
+
     done < $3
+
     printf "\n"
 }
 
