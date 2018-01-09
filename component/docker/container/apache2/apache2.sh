@@ -73,7 +73,6 @@ function skyflowDockerOnContainerProgress()
     echo "$2"
 }
 
-
 function skyflowDockerOnContainerFinish()
 {
     dockerHelperOnContainerFinish

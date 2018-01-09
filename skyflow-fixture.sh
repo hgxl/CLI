@@ -17,14 +17,26 @@ source ./helper.sh
 
 #CWD=$PWD
 
-#skyflowHelperPrintSuccess "Salut"
+function skyflowFixtureList()
+{
+    count=0;
+    printf "\n\033[0;96mSkyflow Fixture CLI:\033[0m\n"
+    start=1
+    end=25
+    for ((i=$start; i<=$end; i++)); do printf "\033[0;96m-\033[0m"; done
+    printf "\n"
 
-skyflowHelperPrintVersion "Franck" "Toto"
+    DONE=false
+    until $DONE; do
+        read fixture || DONE=true
 
-#lc=$(skyflowHelperCountFileLines toto.txt)
-lc=$(skyflowHelperGetRandomLineFromFile toto.txt)
+        count=$((count + 1))
+        printf "%s - \033[0;35m%s\033[0m\n" "$count" "$fixture"
 
-echo $lc
+    done < $SKYFLOW_DIR/component/fixture/fixtures.txt
+
+    printf "\n"
+}
 
 # =======================================
 
@@ -34,6 +46,9 @@ case $1 in
     ;;
     "-v"|"--version")
 #        skyflowHelperPrintVersion "$versionMessage" "$author"
+    ;;
+    "list")
+        skyflowFixtureList
     ;;
     *)
 

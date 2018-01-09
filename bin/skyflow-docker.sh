@@ -13,32 +13,26 @@ source $HOME/.skyflow/component/docker/helper.sh
 
 author="Skyflow Team - Franck Diomandé <fkdiomande@gmail.com>"
 versionMessage="Skyflow Docker CLI version $SKYFLOW_DOCKER_VERSION"
-docFile="$SKYFLOW_DIR/component/docker/doc.ini"
+docFile="$SKYFLOW_DOCKER_DIR/doc.ini"
 playbook=1
-
-CWD=$PWD
 
 # Todo: Create new group and add current user and apache and docker
 # Todo: Can not access to application by localhost for apache2
 
 function skyflowDockerInit()
 {
+    # Todo: Revoir la condition
     if [ -d docker ] && test -z $1; then
     	skyflowHelperPrintError "docker directory already exists. Use -f option to continue"
     	exit 1
 	fi
-	if [ -d docker ]; then
-    	sudo rm -rf docker
-	fi
+	[ -d docker ] && sudo rm -rf docker
 
-    mkdir docker docker/conf docker/extra
-
-    containerDir=$SKYFLOW_DIR/component/docker/container
+    mkdir -p docker/conf docker/extra
 
     # Select container type
-    cd $containerDir
     export PS3="Select your container : "
-    select container in *
+    select container in $(cat $SKYFLOW_DOCKER_DIR/list/container.ls)
     do
         if [ -d $container ]; then
             break
@@ -48,16 +42,34 @@ function skyflowDockerInit()
 
     export CURRENT_CONTAINER=$container
 
-    cd $CWD/docker
+    for element in container conf extra; do
 
-    cp $containerDir/$container/$container.ini docker.ini
+        if grep -Fxq "$container" $SKYFLOW_DOCKER_DIR/list/$element.ls; then
 
-    source $containerDir/$container/$container.sh
+            if [ ! -f $SKYFLOW_DOCKER_DIR/make/$element/$container.sh ]; then
+                mkdir -p $SKYFLOW_DOCKER_DIR/make/$element
+                curl -s "$SKYFLOW_GITHUB_CONTENT/component/docker/make/$element/$container.sh" -o $SKYFLOW_DOCKER_DIR/make/$element/$container.sh
+                sudo chmod +x $SKYFLOW_DOCKER_DIR/make/$element/$container.sh
+            fi
+            # Create directories and get files for selected container
+            [ ! -d $SKYFLOW_DOCKER_DIR/$element/$container ] && $SKYFLOW_DOCKER_DIR/make/$element/$container.sh
+
+        fi
+
+    done
+
+    cd docker
+
+    cp $SKYFLOW_DOCKER_DIR/container/$container/$container.ini docker.ini
+
+    source $SKYFLOW_DOCKER_DIR/container/$container/$container.sh
 
     skyflowDockerOnContainerInit
 
-    while read -u3 line
-    do
+    DONE=false
+    until $DONE; do
+        read -u3 line || DONE=true
+
         # First char
         firstchar=${line:0:1}
 
@@ -111,7 +123,7 @@ function skyflowDockerLs()
             skyflowHelperRunCommand "docker $input ls -a"
         ;;
         "compose")
-            cd $SKYFLOW_DIR/component/docker/compose
+            cd $SKYFLOW_DOCKER_DIR/compose
             count=0
 
             echo
@@ -150,7 +162,7 @@ function skyflowDockerRm()
 function skyflowDockerUseCompose()
 {
     local compose=$1
-    local dockerDir=$SKYFLOW_DIR/component/docker
+    local dockerDir=$SKYFLOW_DOCKER_DIR
     if [ ! -f $dockerDir/compose/$compose.yml ]; then
         skyflowHelperPrintError "Compose '$compose' not found. Use 'skyflow-docker ls compose' command"
         exit 1
