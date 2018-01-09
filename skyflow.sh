@@ -26,17 +26,10 @@ function skyflowHelperPrintCurlFailedError()
 # - $2 : Output directory
 function skyflowHelperPullFromRemote()
 {
-    skyflowHelperPrintInfo "Pulling '$1' from remote ..."
+    printf "\033[0;94mPulling\033[0m \033[0;92m%s\033[0m \033[0;94mfrom remote ...\033[0m" "$1"
     curl -s "$SKYFLOW_GITHUB_CONTENT/$1" -o $2
     [ ! $? -eq 0 ] && skyflowHelperPrintCurlFailedError "$1"
-}
-
-# Print skyflow formatted info message
-# Arguments:
-# - $1 : Message
-function skyflowHelperPrintInfo()
-{
-    echo -e "\033[0;94m$1\033[0m"
+    printf "\033[0;92mOk\033[0m\n"
 }
 
 # End local helper <<<<<<<<<<<===============
