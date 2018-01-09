@@ -23,18 +23,15 @@ function skyflowInit()
     fi
 
     if [ ! -f $SKYFLOW_DIR/doc.ini ]; then
-        curl -s "$SKYFLOW_GITHUB_CONTENT/doc.ini" -o $SKYFLOW_DIR/doc.ini
-        [ ! $? -eq 0 ] && skyflowHelperPrintCurlFailedError "doc.ini"
+        skyflowHelperPullFromRemote "doc.ini" "$SKYFLOW_DIR/doc.ini"
     fi
 
     if [ ! -f $SKYFLOW_DIR/helper.sh ]; then
-        curl -s "$SKYFLOW_GITHUB_CONTENT/helper.sh" -o $SKYFLOW_DIR/helper.sh
-        [ ! $? -eq 0 ] && skyflowHelperPrintCurlFailedError "helper.sh"
+        skyflowHelperPullFromRemote "helper.sh" "$SKYFLOW_DIR/helper.sh"
     fi
 
     if [ ! -f $SKYFLOW_DIR/component.ls ]; then
-        curl -s "$SKYFLOW_GITHUB_CONTENT/component.ls" -o $SKYFLOW_DIR/component.ls
-        [ ! $? -eq 0 ] && skyflowHelperPrintCurlFailedError "component.ls"
+        skyflowHelperPullFromRemote "component.ls" "$SKYFLOW_DIR/component.ls"
     fi
 
 }

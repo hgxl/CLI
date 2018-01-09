@@ -20,6 +20,17 @@ function skyflowHelperPrintCurlFailedError()
     exit 1
 }
 
+# Pull resources from remote
+# Arguments:
+# - $1 : Resource path
+# - $2 : Output directory
+function skyflowHelperPullFromRemote()
+{
+    skyflowHelperPrintInfo "Pulling '$1' from remote ..."
+    curl -s "$SKYFLOW_GITHUB_CONTENT/$1" -o $2
+    [ ! $? -eq 0 ] && skyflowHelperPrintCurlFailedError "$1"
+}
+
 # Print skyflow formatted success message
 # Arguments:
 # - $1 : Message

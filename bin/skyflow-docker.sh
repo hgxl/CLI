@@ -49,8 +49,7 @@ function skyflowDockerInit()
 
             if [ ! -f $SKYFLOW_DOCKER_DIR/make/$element/$container.sh ]; then
                 mkdir -p $SKYFLOW_DOCKER_DIR/make/$element
-                curl -s "$SKYFLOW_GITHUB_CONTENT/component/docker/make/$element/$container.sh" -o $SKYFLOW_DOCKER_DIR/make/$element/$container.sh
-                [ ! $? -eq 0 ] && skyflowHelperPrintCurlFailedError "docker/make/$element/$container.sh"
+                skyflowHelperPullFromRemote "component/docker/make/$element/$container.sh" "$SKYFLOW_DOCKER_DIR/make/$element/$container.sh"
                 sudo chmod +x $SKYFLOW_DOCKER_DIR/make/$element/$container.sh
             fi
             # Create directories and get files for selected container
