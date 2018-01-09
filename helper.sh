@@ -16,7 +16,8 @@ function skyflowHelperPrintError()
 
 function skyflowHelperPrintCurlFailedError()
 {
-    echo -e "\033[0;31mSkyflow error: Can't pull '$1' from remote\033[0m"
+    echo -e "\033[0;31mSkyflow error: Can not find the file '$1'.\033[0m"
+    echo -e "\033[0;31mPlease check your internet connection and that the file exists.\033[0m"
     exit 1
 }
 
