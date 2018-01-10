@@ -198,6 +198,10 @@ function skyflowDockerUseCompose()
         skyflowHelperPullFromRemote "component/docker/compose/$compose.yml" "$SKYFLOW_DOCKER_DIR/compose/$compose.yml"
     fi
 
+    if [ ! -f $SKYFLOW_DOCKER_DIR/compose/$compose.ini ]; then
+        skyflowHelperPullFromRemote "component/docker/compose/$compose.ini" "$SKYFLOW_DOCKER_DIR/compose/$compose.ini"
+    fi
+
     skyflowDockerPullConfAndExtraConf "$compose"
 
     # Enter docker directory
