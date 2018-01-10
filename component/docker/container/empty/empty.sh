@@ -24,5 +24,5 @@ function skyflowDockerOnContainerProgress()
 
 function skyflowDockerOnContainerFinish()
 {
-    skyflowHelperPrintInfo "You have created an empty container. Use the 'skyflow-docker use <composer_name>' command to add containers"
+    skyflowHelperPrintInfo "You have created an empty container. Use the 'skyflow-docker use <compose_name>' command to add containers"
 }

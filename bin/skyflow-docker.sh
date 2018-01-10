@@ -189,7 +189,7 @@ function skyflowDockerUseCompose()
 {
     local compose=$1
 
-    if ! grep -Fxq "$compose" $SKYFLOW_DIR/list/compose.ls; then
+    if ! grep -Fxq "$compose" $SKYFLOW_DOCKER_DIR/list/compose.ls; then
         skyflowHelperPrintError "Compose '$compose' not found. Use 'skyflow-docker ls compose' command"
     	exit 1
     fi
