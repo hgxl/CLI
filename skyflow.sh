@@ -34,32 +34,26 @@ function skyflowLocalHelperPullFromRemote()
 
 # End local helper <<<<<<<<<<<===============
 
-
 function skyflowInit()
 {
     case $1 in
         "-f")
             if [ -d $SKYFLOW_DIR ]; then
-                rm -rf $SKYFLOW_DIR
+                [ -d $SKYFLOW_DIR/component ] && rm -rf $SKYFLOW_DIR/component
+                [ -f $SKYFLOW_DIR/helper.sh ] && rm $SKYFLOW_DIR/helper.sh
+                [ -f $SKYFLOW_DIR/doc.ini ] && rm $SKYFLOW_DIR/doc.ini
+                [ -f $SKYFLOW_DIR/component.ls ] && rm $SKYFLOW_DIR/component.ls
             fi
         ;;
     esac
 
-    if [ ! -d $SKYFLOW_DIR/component ]; then
-        mkdir -p $SKYFLOW_DIR/component
-    fi
+    [ ! -d $SKYFLOW_DIR/component ] && mkdir -p $SKYFLOW_DIR/component
 
-    if [ ! -f $SKYFLOW_DIR/doc.ini ]; then
-        skyflowLocalHelperPullFromRemote "doc.ini" "$SKYFLOW_DIR/doc.ini"
-    fi
+    [ ! -f $SKYFLOW_DIR/doc.ini ] && skyflowLocalHelperPullFromRemote "doc.ini" "$SKYFLOW_DIR/doc.ini"
 
-    if [ ! -f $SKYFLOW_DIR/helper.sh ]; then
-        skyflowLocalHelperPullFromRemote "helper.sh" "$SKYFLOW_DIR/helper.sh"
-    fi
+    [ ! -f $SKYFLOW_DIR/helper.sh ] && skyflowLocalHelperPullFromRemote "helper.sh" "$SKYFLOW_DIR/helper.sh"
 
-    if [ ! -f $SKYFLOW_DIR/component.ls ]; then
-        skyflowLocalHelperPullFromRemote "component.ls" "$SKYFLOW_DIR/component.ls"
-    fi
+    [ ! -f $SKYFLOW_DIR/component.ls ] && skyflowLocalHelperPullFromRemote "component.ls" "$SKYFLOW_DIR/component.ls"
 
 }
 
