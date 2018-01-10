@@ -12,6 +12,7 @@ ls image|container|compose              List all images, containers or available
 rm image|container [-a]                 Remove all images or containers from current docker-compose.yml file. use '-a' option to remove all containers.
 playbook                                Run all commands in playbook file.
 use|compose <compose>                   Use compose.
+<container>:stop                        Execute commands into containers. => mycontainer:exec "apk add --no-cache php7-json"
 <container>:exec                        Execute commands into containers. => mycontainer:exec "apk add --no-cache php7-json"
 <container>:update                      Execute update command into containers.
 <container>:add|install                 Execute add or install command into containers. => mycontainer:install "php7-json"

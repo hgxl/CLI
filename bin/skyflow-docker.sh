@@ -155,8 +155,9 @@ function skyflowDockerRm()
 
         "container"|"containers")
 
+            [ "$2" == "-a" ] && skyflowHelperRunCommand "docker rm -f -v $(docker ps -a -q)"
+            findDockerComposeFile
             [ "$2" != "-a" ] && skyflowHelperRunCommand "docker-compose rm -s -f -v"
-            [ "$2" == "-a" ] && skyflowHelperRunCommand "docker rm -s -f -v $(docker ps -a -q)"
 
         ;;
         "image"|"images")
@@ -174,8 +175,9 @@ function skyflowDockerRm()
 
 function skyflowDockerStop()
 {
-    [ "$1" != "-a" ] && skyflowHelperRunCommand "docker-compose stop"
     [ "$1" == "-a" ] && skyflowHelperRunCommand "docker stop $(docker ps -aq)"
+    findDockerComposeFile
+    [ "$1" != "-a" ] && skyflowHelperRunCommand "docker-compose stop"
 }
 
 function skyflowDockerPrune()
@@ -230,7 +232,7 @@ function skyflowDockerUseCompose()
     	    newValue=$value
 	    fi
 
-	    echo -e "\033[0;92m✓ $newValue\033[0m"
+	    printf "\033[0;92m✓ %s\033[0m\n" "$newValue"
 
         if [ -f Dockerfile ]; then
             sed -i "s#{{ *$key *}}#$newValue#g" Dockerfile
@@ -255,37 +257,31 @@ function skyflowExecContainer()
 
     local type="alpine"
     sudo docker-compose exec $container apt-get >> /dev/null
-    if [ $? -eq 0 ]; then
-        type="debian"
-    fi
+    [ $? -eq 0 ] && type="debian"
 
     case $command in
+        "stop")
+            skyflowHelperRunCommand "docker stop $container"
+            exit $?
+        ;;
         "exec")
             fullCommand="$args"
         ;;
         "update")
             fullCommand="apk update $args"
-            if [ "$type" == "debian" ]; then
-                fullCommand="apt-get update $args"
-            fi
+            [ "$type" == "debian" ] && fullCommand="apt-get update $args"
         ;;
         "add"|"install")
             fullCommand="apk add --no-cache $args"
-            if [ "$type" == "debian" ]; then
-                fullCommand="apt-get install $args"
-            fi
+            [ "$type" == "debian" ] && fullCommand="apt-get install $args"
         ;;
         "del"|"remove")
             fullCommand="apk del $args"
-            if [ "$type" == "debian" ]; then
-                fullCommand="apt-get remove $args"
-            fi
+            [ "$type" == "debian" ] && fullCommand="apt-get remove $args"
         ;;
         "shell"|"enter")
             fullCommand="sh"
-            if [ "$type" == "debian" ]; then
-                fullCommand="bash"
-            fi
+            [ "$type" == "debian" ] && fullCommand="bash"
         ;;
         *)
             skyflowHelperPrintError "'$fullCommand' command not found"
@@ -293,14 +289,12 @@ function skyflowExecContainer()
         ;;
     esac
 
-    echo -e "\033[0;94mRunning $container:$command $args ...\033[0m"
+    printf "\033[0;94mRunning %s:%s %s ...\033[0m\n" "$container" "$command" "$args"
     sudo docker-compose exec $container $fullCommand
     if [ $? -eq 0 ]; then
         commands=(shell enter)
         if [[ ! ${commands[*]} =~ "$command" ]] && [ $playbook -eq 1 ]; then
-            if [ ! -f playbook ]; then
-                touch playbook
-            fi
+            [ ! -f playbook ] && touch playbook
             echo "$container:$command $args" >> playbook
         fi
         skyflowHelperPrintSuccess "docker-compose exec $container $fullCommand"
@@ -308,7 +302,6 @@ function skyflowExecContainer()
         skyflowHelperPrintError "Failed to execute '$fullCommand' command in '$container' container"
     fi
 }
-
 
 function skyflowPlaybook()
 {
