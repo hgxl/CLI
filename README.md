@@ -106,9 +106,9 @@ Each command line must be in the following form `skyflow-<component-name>-sh`.
 
 The **`component`** directory contains all the components.
 All files in the component must be put in a folder with the name of the component.
-Each component must provide command-line documentation in the `{component}.doc` file and documentation in the `README.md` file.
+Each component must provide command-line documentation in the `{component}.sdoc` file and documentation in the `README.md` file.
 
-The **`{component}.doc`** file is the command line documentation for skyflow.
+The **`{component}.sdoc`** file is the command line documentation for skyflow.
 
 The **`helper.sh`** script contains many useful functions for creating components.
 Use `source $HOME/.skyflow/helper.sh` to import all functions. 

@@ -83,7 +83,7 @@ function skyflowHelperGetFromIni()
 # Arguments:
 # - $1 : Title
 # - $2 : Author
-# - $3 : File to use ({component}.doc)
+# - $3 : File to use ({component}.sdoc)
 function skyflowHelperPrintHelp()
 {
     printf "\n\033[0;96m%s\033[0m\033[0;37m - %s\033[0m\n" "$1" "$2"

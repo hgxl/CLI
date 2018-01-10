@@ -78,7 +78,7 @@ function skyflowInstall()
 
     # Run install script
     mkdir -p $SKYFLOW_DIR/component/$1
-    skyflowHelperPullFromRemote "component/$1/$1.doc" "$SKYFLOW_DIR/component/$1/$1.doc"
+    skyflowHelperPullFromRemote "component/$1/$1.sdoc" "$SKYFLOW_DIR/component/$1/$1.sdoc"
     skyflowHelperPullFromRemote "component/$1/install.sh" "$SKYFLOW_DIR/component/$1/install.sh"
     sudo chmod +x $SKYFLOW_DIR/component/$1/install.sh
     $SKYFLOW_DIR/component/$1/install.sh
