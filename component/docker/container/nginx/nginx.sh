@@ -20,6 +20,8 @@ function skyflowDockerOnContainerInit()
         cp $SKYFLOW_DOCKER_DIR/container/$container/docker-compose.yml docker-compose.yml
     fi
 
+    skyflowDockerPullConfAndExtraConf "php"
+
     # Copy php configuration files
     cp -r $SKYFLOW_DOCKER_DIR/conf/php conf/php
 

@@ -56,3 +56,22 @@ function dockerHelperOnContainerFinish()
     echo -e "\033[0;94mAfter 'skyflow-docker up' command, go to \033[4;94m$serverName:$containerPort\033[0m"
 }
 
+
+function skyflowDockerPullConfAndExtraConf()
+{
+    for element in conf extra; do
+
+        if grep -Fxq "$1" $SKYFLOW_DOCKER_DIR/list/$element.ls; then
+
+            if [ ! -f $SKYFLOW_DOCKER_DIR/make/$element/$1.sh ]; then
+                mkdir -p $SKYFLOW_DOCKER_DIR/make/$element
+                skyflowHelperPullFromRemote "component/docker/make/$element/$1.sh" "$SKYFLOW_DOCKER_DIR/make/$element/$1.sh"
+                sudo chmod +x $SKYFLOW_DOCKER_DIR/make/$element/$1.sh
+            fi
+            # Create directories and get files for selected container
+            [ ! -d $SKYFLOW_DOCKER_DIR/$element/$1 ] && $SKYFLOW_DOCKER_DIR/make/$element/$1.sh
+
+        fi
+
+    done
+}

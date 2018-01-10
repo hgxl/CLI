@@ -18,6 +18,8 @@ function skyflowDockerOnContainerInit()
         case $php in
           5|7)
 
+            skyflowDockerPullConfAndExtraConf "php"
+
             # Copy php configuration files
             cp -r $SKYFLOW_DOCKER_DIR/conf/php conf/php
 

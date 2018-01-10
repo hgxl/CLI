@@ -177,21 +177,7 @@ function skyflowDockerUseCompose()
         skyflowHelperPullFromRemote "component/docker/compose/$compose.yml" "$SKYFLOW_DOCKER_DIR/compose/$compose.yml"
     fi
 
-    for element in conf extra; do
-
-        if grep -Fxq "$compose" $SKYFLOW_DOCKER_DIR/list/$element.ls; then
-
-            if [ ! -f $SKYFLOW_DOCKER_DIR/make/$element/$compose.sh ]; then
-                mkdir -p $SKYFLOW_DOCKER_DIR/make/$element
-                skyflowHelperPullFromRemote "component/docker/make/$element/$compose.sh" "$SKYFLOW_DOCKER_DIR/make/$element/$compose.sh"
-                sudo chmod +x $SKYFLOW_DOCKER_DIR/make/$element/$compose.sh
-            fi
-            # Create directories and get files for selected container
-            [ ! -d $SKYFLOW_DOCKER_DIR/$element/$compose ] && $SKYFLOW_DOCKER_DIR/make/$element/$compose.sh
-
-        fi
-
-    done
+    skyflowDockerPullConfAndExtraConf "$compose"
 
     # Enter docker directory
     findDockerComposeFile

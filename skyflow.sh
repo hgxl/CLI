@@ -48,11 +48,8 @@ function skyflowInit()
     esac
 
     [ ! -d $SKYFLOW_DIR/component ] && mkdir -p $SKYFLOW_DIR/component
-
     [ ! -f $SKYFLOW_DIR/doc.ini ] && skyflowLocalHelperPullFromRemote "doc.ini" "$SKYFLOW_DIR/doc.ini"
-
     [ ! -f $SKYFLOW_DIR/helper.sh ] && skyflowLocalHelperPullFromRemote "helper.sh" "$SKYFLOW_DIR/helper.sh"
-
     [ ! -f $SKYFLOW_DIR/component.ls ] && skyflowLocalHelperPullFromRemote "component.ls" "$SKYFLOW_DIR/component.ls"
 
 }

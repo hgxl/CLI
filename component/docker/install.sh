@@ -1,7 +1,7 @@
 #! /bin/sh
 
 source $HOME/.skyflow/helper.sh
-curl -s "$SKYFLOW_GITHUB_CONTENT/component/docker/helper.sh" -o $SKYFLOW_DIR/component/docker/helper.sh
+skyflowHelperPullFromRemote "component/docker/helper.sh" $SKYFLOW_DIR/component/docker/helper.sh
 source $SKYFLOW_DIR/component/docker/helper.sh
 
 [ ! -d $SKYFLOW_DOCKER_DIR/compose ] && mkdir -p $SKYFLOW_DOCKER_DIR/compose
@@ -11,7 +11,7 @@ source $SKYFLOW_DIR/component/docker/helper.sh
 [ ! -d $SKYFLOW_DOCKER_DIR/list ] && mkdir -p $SKYFLOW_DOCKER_DIR/list
 [ ! -d $SKYFLOW_DOCKER_DIR/make ] && mkdir -p $SKYFLOW_DOCKER_DIR/make
 
-curl -s "$SKYFLOW_GITHUB_CONTENT/component/docker/list/compose.ls" -o $SKYFLOW_DOCKER_DIR/list/compose.ls
-curl -s "$SKYFLOW_GITHUB_CONTENT/component/docker/list/conf.ls" -o $SKYFLOW_DOCKER_DIR/list/conf.ls
-curl -s "$SKYFLOW_GITHUB_CONTENT/component/docker/list/container.ls" -o $SKYFLOW_DOCKER_DIR/list/container.ls
-curl -s "$SKYFLOW_GITHUB_CONTENT/component/docker/list/extra.ls" -o $SKYFLOW_DOCKER_DIR/list/extra.ls
+skyflowHelperPullFromRemote "component/docker/list/compose.ls" $SKYFLOW_DOCKER_DIR/list/compose.ls
+skyflowHelperPullFromRemote "component/docker/list/conf.ls" $SKYFLOW_DOCKER_DIR/list/conf.ls
+skyflowHelperPullFromRemote "component/docker/list/container.ls" $SKYFLOW_DOCKER_DIR/list/container.ls
+skyflowHelperPullFromRemote "component/docker/list/extra.ls" $SKYFLOW_DOCKER_DIR/list/extra.ls
