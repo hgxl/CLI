@@ -94,8 +94,8 @@ function skyflowInstall()
     rm $SKYFLOW_DIR/component/$1/install.sh
 
     # Install binary
-    sudo skyflowHelperPullFromRemote "bin/skyflow-$1.sh" "/usr/local/bin/skyflow-$1"
-#    sudo curl -s "$SKYFLOW_GITHUB_CONTENT/bin/skyflow-$1.sh" -o /usr/local/bin/skyflow-$1
+    skyflowHelperPullFromRemote "bin/skyflow-$1.sh" skyflow-$1
+    sudo mv skyflow-$1 /usr/local/bin/skyflow-$1
     sudo chmod +x /usr/local/bin/skyflow-$1
 
     skyflowHelperPrintSuccess "$1 component was successfully installed! Now you can use \033[4;94mskyflow-$1\033[0;92m CLI"
