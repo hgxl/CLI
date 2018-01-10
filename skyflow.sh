@@ -24,9 +24,9 @@ function skyflowHelperPrintCurlFailedError()
 # Arguments:
 # - $1 : Resource path
 # - $2 : Output directory
-function skyflowHelperPullFromRemote()
+function skyflowLocalHelperPullFromRemote()
 {
-    printf "\033[0;94mPulling\033[0m \033[0;92m%s\033[0m \033[0;94mfrom remote ...\033[0m" "$1"
+    printf "\033[0;94mPulling\033[0m \033[0;92m%s\033[0m \033[0;94mfrom remote ... \033[0m" "$1"
     curl -s "$SKYFLOW_GITHUB_CONTENT/$1" -o $2
     [ ! $? -eq 0 ] && skyflowHelperPrintCurlFailedError "$1"
     printf "\033[0;92mOk\033[0m\n"
@@ -50,15 +50,15 @@ function skyflowInit()
     fi
 
     if [ ! -f $SKYFLOW_DIR/doc.ini ]; then
-        skyflowHelperPullFromRemote "doc.ini" "$SKYFLOW_DIR/doc.ini"
+        skyflowLocalHelperPullFromRemote "doc.ini" "$SKYFLOW_DIR/doc.ini"
     fi
 
     if [ ! -f $SKYFLOW_DIR/helper.sh ]; then
-        skyflowHelperPullFromRemote "helper.sh" "$SKYFLOW_DIR/helper.sh"
+        skyflowLocalHelperPullFromRemote "helper.sh" "$SKYFLOW_DIR/helper.sh"
     fi
 
     if [ ! -f $SKYFLOW_DIR/component.ls ]; then
-        skyflowHelperPullFromRemote "component.ls" "$SKYFLOW_DIR/component.ls"
+        skyflowLocalHelperPullFromRemote "component.ls" "$SKYFLOW_DIR/component.ls"
     fi
 
 }
@@ -74,8 +74,7 @@ docFile="$SKYFLOW_DIR/doc.ini"
 
 function skyflowInstall()
 {
-	if ! grep -Fxq "$1" $SKYFLOW_DIR/component.ls
-	then
+	if ! grep -Fxq "$1" $SKYFLOW_DIR/component.ls; then
         skyflowHelperPrintError "$1 component not found"
     	exit 1
     fi
@@ -88,14 +87,15 @@ function skyflowInstall()
 
     # Run install script
     mkdir -p $SKYFLOW_DIR/component/$1
-    curl -s "$SKYFLOW_GITHUB_CONTENT/component/$1/doc.ini" -o $SKYFLOW_DIR/component/$1/doc.ini
-    curl -s "$SKYFLOW_GITHUB_CONTENT/component/$1/install.sh" -o $SKYFLOW_DIR/component/$1/install.sh
+    skyflowHelperPullFromRemote "component/$1/doc.ini" "$SKYFLOW_DIR/component/$1/doc.ini"
+    skyflowHelperPullFromRemote "component/$1/install.sh" "$SKYFLOW_DIR/component/$1/install.sh"
     sudo chmod +x $SKYFLOW_DIR/component/$1/install.sh
     $SKYFLOW_DIR/component/$1/install.sh
     rm $SKYFLOW_DIR/component/$1/install.sh
 
     # Install binary
-    sudo curl -s "$SKYFLOW_GITHUB_CONTENT/bin/skyflow-$1.sh" -o /usr/local/bin/skyflow-$1
+    sudo skyflowHelperPullFromRemote "bin/skyflow-$1.sh" "/usr/local/bin/skyflow-$1"
+#    sudo curl -s "$SKYFLOW_GITHUB_CONTENT/bin/skyflow-$1.sh" -o /usr/local/bin/skyflow-$1
     sudo chmod +x /usr/local/bin/skyflow-$1
 
     skyflowHelperPrintSuccess "$1 component was successfully installed! Now you can use \033[4;94mskyflow-$1\033[0;92m CLI"

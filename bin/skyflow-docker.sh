@@ -22,7 +22,8 @@ playbook=1
 function skyflowDockerInit()
 {
     # Todo: Revoir la condition
-    if [ -d docker ] && test -z $1; then
+#    if [ -d docker ] && test -z $1; then
+    if [ -d docker ] && [ "$1" != "-f" ]; then
     	skyflowHelperPrintError "docker directory already exists. Use -f option to continue"
     	exit 1
 	fi
@@ -166,24 +167,44 @@ function skyflowDockerRm()
 function skyflowDockerUseCompose()
 {
     local compose=$1
-    local dockerDir=$SKYFLOW_DOCKER_DIR
-    if [ ! -f $dockerDir/compose/$compose.yml ]; then
+
+    if ! grep -Fxq "$compose" $SKYFLOW_DIR/list/compose.ls; then
         skyflowHelperPrintError "Compose '$compose' not found. Use 'skyflow-docker ls compose' command"
-        exit 1
+    	exit 1
     fi
+
+    if [ ! -f $SKYFLOW_DOCKER_DIR/compose/$compose.yml ]; then
+        skyflowHelperPullFromRemote "component/docker/compose/$compose.yml" "$SKYFLOW_DOCKER_DIR/compose/$compose.yml"
+    fi
+
+    for element in conf extra; do
+
+        if grep -Fxq "$compose" $SKYFLOW_DOCKER_DIR/list/$element.ls; then
+
+            if [ ! -f $SKYFLOW_DOCKER_DIR/make/$element/$compose.sh ]; then
+                mkdir -p $SKYFLOW_DOCKER_DIR/make/$element
+                skyflowHelperPullFromRemote "component/docker/make/$element/$compose.sh" "$SKYFLOW_DOCKER_DIR/make/$element/$compose.sh"
+                sudo chmod +x $SKYFLOW_DOCKER_DIR/make/$element/$compose.sh
+            fi
+            # Create directories and get files for selected container
+            [ ! -d $SKYFLOW_DOCKER_DIR/$element/$compose ] && $SKYFLOW_DOCKER_DIR/make/$element/$compose.sh
+
+        fi
+
+    done
 
     # Enter docker directory
     findDockerComposeFile
 
-    local composeContent=`cat $dockerDir/compose/$compose.yml`
+    local composeContent=`cat $SKYFLOW_DOCKER_DIR/compose/$compose.yml`
     echo -e "\n$composeContent" >> docker-compose.yml
 
-    if [ -d $dockerDir/conf/$compose ] && [ ! -d conf/$compose ]; then
-        cp -r $dockerDir/conf/$compose conf/$compose
+    if [ -d $SKYFLOW_DOCKER_DIR/conf/$compose ] && [ ! -d conf/$compose ]; then
+        cp -r $SKYFLOW_DOCKER_DIR/conf/$compose conf/$compose
     fi
 
-    if [ -d $dockerDir/extra/$compose ] && [ ! -d extra/$compose ]; then
-        cp -r $dockerDir/extra/$compose extra/$compose
+    if [ -d $SKYFLOW_DOCKER_DIR/extra/$compose ] && [ ! -d extra/$compose ]; then
+        cp -r $SKYFLOW_DOCKER_DIR/extra/$compose extra/$compose
     fi
 
     while read -u3 line
@@ -216,7 +237,7 @@ function skyflowDockerUseCompose()
             sed -i "s#{{ *$key *}}#$newValue#g" conf/$compose/Dockerfile
         fi
 
-    done 3< $dockerDir/compose/$compose.ini
+    done 3< $SKYFLOW_DOCKER_DIR/compose/$compose.ini
     
 }
 
