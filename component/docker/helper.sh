@@ -18,12 +18,10 @@ function findDockerComposeFile()
         fi
 }
 
-#
 # This function uses docker.ini information to:
 # - create document root directory
 # - create directory index file
 # - add server name to /etc/hosts file
-#
 function dockerHelperOnContainerFinish()
 {
     local applicationName=$(skyflowHelperGetFromIni "docker.ini" "application.name")
@@ -51,11 +49,10 @@ function dockerHelperOnContainerFinish()
     fi
 
     # Add server name to hosts file
-    sudo sh -c "echo -e 127.0.0.1    $serverName >> /etc/hosts"
+    sudo sh -c 'printf "127.0.0.1       %s" "$serverName" >> /etc/hosts'
     skyflowHelperPrintSuccess "'$serverName' added to your hosts file."
-    echo -e "\033[0;94mAfter 'skyflow-docker up' command, go to \033[4;94m$serverName:$containerPort\033[0m"
+    printf "\033[0;94mAfter 'skyflow-docker up' command, go to \033[4;94m%s:%s\033[0m" "$serverName" "$containerPort"
 }
-
 
 function skyflowDockerPullConfAndExtraConf()
 {

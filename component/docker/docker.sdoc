@@ -1,0 +1,19 @@
+[skyflow-docker CLI]
+-h                                      Short option for displaying commands documentation.
+--help                                  Long option for displaying commands documentation.
+-v                                      Short option for displaying skyflow docker CLI version.
+--version                               Long option for displaying skyflow docker CLI version.
+init [-f]                               Init skyflow.
+create [-f]                             Init skyflow.
+up                                      Build, create and start containers.
+prune                                   Clean up any resources (images, containers, volumes, and networks)
+stop [-a]                               Stop all running containers
+ls image|container|compose              List all images, containers or available compose.
+rm image|container [-a]                 Remove all images or containers from current docker-compose.yml file. use '-a' option to remove all containers.
+playbook                                Run all commands in playbook file.
+use|compose <compose>                   Use compose.
+<container>:exec                        Execute commands into containers. => mycontainer:exec "apk add --no-cache php7-json"
+<container>:update                      Execute update command into containers.
+<container>:add|install                 Execute add or install command into containers. => mycontainer:install "php7-json"
+<container>:del|remove                  Execute del or remove command into containers. => mycontainer:del "php7-json"
+<container>:shell|enter                 Enter into container.

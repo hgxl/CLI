@@ -41,14 +41,14 @@ function skyflowInit()
             if [ -d $SKYFLOW_DIR ]; then
                 [ -d $SKYFLOW_DIR/component ] && rm -rf $SKYFLOW_DIR/component
                 [ -f $SKYFLOW_DIR/helper.sh ] && rm $SKYFLOW_DIR/helper.sh
-                [ -f $SKYFLOW_DIR/doc.ini ] && rm $SKYFLOW_DIR/doc.ini
+                [ -f $SKYFLOW_DIR/skyflow.sdoc ] && rm $SKYFLOW_DIR/skyflow.sdoc
                 [ -f $SKYFLOW_DIR/component.ls ] && rm $SKYFLOW_DIR/component.ls
             fi
         ;;
     esac
 
     [ ! -d $SKYFLOW_DIR/component ] && mkdir -p $SKYFLOW_DIR/component
-    [ ! -f $SKYFLOW_DIR/doc.ini ] && skyflowLocalHelperPullFromRemote "doc.ini" "$SKYFLOW_DIR/doc.ini"
+    [ ! -f $SKYFLOW_DIR/skyflow.sdoc ] && skyflowLocalHelperPullFromRemote "skyflow.sdoc" "$SKYFLOW_DIR/skyflow.sdoc"
     [ ! -f $SKYFLOW_DIR/helper.sh ] && skyflowLocalHelperPullFromRemote "helper.sh" "$SKYFLOW_DIR/helper.sh"
     [ ! -f $SKYFLOW_DIR/component.ls ] && skyflowLocalHelperPullFromRemote "component.ls" "$SKYFLOW_DIR/component.ls"
 
@@ -61,7 +61,7 @@ source $SKYFLOW_DIR/helper.sh
 
 author="Skyflow Team - Franck Diomandé <fkdiomande@gmail.com>"
 versionMessage="Skyflow CLI version $SKYFLOW_VERSION"
-docFile="$SKYFLOW_DIR/doc.ini"
+docFile="$SKYFLOW_DIR/skyflow.sdoc"
 
 function skyflowInstall()
 {
@@ -78,7 +78,7 @@ function skyflowInstall()
 
     # Run install script
     mkdir -p $SKYFLOW_DIR/component/$1
-    skyflowHelperPullFromRemote "component/$1/doc.ini" "$SKYFLOW_DIR/component/$1/doc.ini"
+    skyflowHelperPullFromRemote "component/$1/$1.doc" "$SKYFLOW_DIR/component/$1/$1.doc"
     skyflowHelperPullFromRemote "component/$1/install.sh" "$SKYFLOW_DIR/component/$1/install.sh"
     sudo chmod +x $SKYFLOW_DIR/component/$1/install.sh
     $SKYFLOW_DIR/component/$1/install.sh

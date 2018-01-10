@@ -13,7 +13,7 @@ source ./helper.sh
 
 #author="Skyflow Team - Franck Diomandé <fkdiomande@gmail.com>"
 #versionMessage="Skyflow Docker CLI version $SKYFLOW_DOCKER_VERSION"
-#docFile="$SKYFLOW_DIR/component/docker/doc.ini"
+#docFile="$SKYFLOW_DIR/component/docker/docker.sdoc"
 
 #CWD=$PWD
 

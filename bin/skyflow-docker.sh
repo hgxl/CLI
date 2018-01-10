@@ -13,7 +13,7 @@ source $HOME/.skyflow/component/docker/helper.sh
 
 author="Skyflow Team - Franck Diomandé <fkdiomande@gmail.com>"
 versionMessage="Skyflow Docker CLI version $SKYFLOW_DOCKER_VERSION"
-docFile="$SKYFLOW_DOCKER_DIR/doc.ini"
+docFile="$SKYFLOW_DOCKER_DIR/docker.sdoc"
 playbook=1
 
 # Todo: Create new group and add current user and apache and docker
@@ -21,8 +21,6 @@ playbook=1
 
 function skyflowDockerInit()
 {
-    # Todo: Revoir la condition
-#    if [ -d docker ] && test -z $1; then
     if [ -d docker ] && [ "$1" != "-f" ]; then
     	skyflowHelperPrintError "docker directory already exists. Use -f option to continue"
     	exit 1
@@ -88,7 +86,7 @@ function skyflowDockerInit()
     	    newValue=$value
 	    fi
 
-	    printf "\033[0;92m✓ %s\033[0m" "$newValue"
+	    printf "\033[0;92m✓ %s\033[0m\n" "$newValue"
 
 	    newValue=$(skyflowDockerOnContainerProgress "$key" "$newValue")
 
@@ -118,11 +116,11 @@ function skyflowDockerLs()
 {
     # Trim : Remove last 's' char
     input=$1
-    input=$(skyflowHelperTrim $input "s")
 
     case $input in
 
-        "image"|"container")
+        "image"|"images"|"container"|"containers")
+            input=$(skyflowHelperTrim $input "s")
             skyflowHelperRunCommand "docker $input ls -a"
         ;;
         "compose")
@@ -153,15 +151,36 @@ function skyflowDockerLs()
 
 function skyflowDockerRm()
 {
-    # Trim : Remove last 's' char
-    input=$1
-    input=$(skyflowHelperTrim $input "s")
+    case $1 in
 
-    if test -z $input; then
-        input="container"
-    fi
+        "container"|"containers")
 
-    skyflowHelperRunCommand "docker $input rm $(docker $input ls -a -q) -f"
+            [ "$2" != "-a" ] && skyflowHelperRunCommand "docker-compose rm -s -f -v"
+            [ "$2" == "-a" ] && skyflowHelperRunCommand "docker rm -s -f -v $(docker ps -a -q)"
+
+        ;;
+        "image"|"images")
+
+            skyflowHelperRunCommand "docker rmi -f $(docker images -q)"
+
+        ;;
+        *)
+            skyflowHelperPrintError "Can't run skyflow-docker rm $1 $2"
+            exit 1
+        ;;
+    esac
+
+}
+
+function skyflowDockerStop()
+{
+    [ "$1" != "-a" ] && skyflowHelperRunCommand "docker-compose stop"
+    [ "$1" == "-a" ] && skyflowHelperRunCommand "docker stop $(docker ps -aq)"
+}
+
+function skyflowDockerPrune()
+{
+    skyflowHelperRunCommand "docker system prune -a"
 }
 
 function skyflowDockerUseCompose()
@@ -329,7 +348,13 @@ case $1 in
         skyflowDockerLs "$2"
     ;;
     "rm")
-        skyflowDockerRm "$2"
+        skyflowDockerRm "$2" "$3"
+    ;;
+    "stop")
+        skyflowDockerStop "$2"
+    ;;
+    "prune")
+        skyflowDockerPrune
     ;;
     "use"|"compose")
         skyflowDockerUseCompose "$2"

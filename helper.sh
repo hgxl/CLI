@@ -83,7 +83,7 @@ function skyflowHelperGetFromIni()
 # Arguments:
 # - $1 : Title
 # - $2 : Author
-# - $3 : File to use (doc.ini)
+# - $3 : File to use ({component}.doc)
 function skyflowHelperPrintHelp()
 {
     printf "\n\033[0;96m%s\033[0m\033[0;37m - %s\033[0m\n" "$1" "$2"
@@ -105,14 +105,7 @@ function skyflowHelperPrintHelp()
             continue
         fi
 
-        key=`expr match "$line" "\([^=]*\) *= .*"`
-        value=`expr match "$line" "$key *= *\(.*\)"`
-
-        # Length
-        len=${#key}
-        printf "%s" "$key"
-        for ((i=1; i<=35-$len; i++)); do printf " "; done
-        printf "%s\n" "$value"
+        printf "%s\n" "$line"
 
     done < $3
 
