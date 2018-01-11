@@ -3,4 +3,4 @@
 --help                          Long option for displaying commands documentation.
 -v                              Short option for displaying skyflow docker CLI version.
 --version                       Long option for displaying skyflow docker CLI version.
-generate                        Generate some fixtures
+generate <name>                 Generate some fixtures.

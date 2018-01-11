@@ -22,15 +22,13 @@ function skyflowFixtureGenerate()
     	exit 1
     fi
 
-    if [ -d fixture ] && [ "$1" != "-f" ]; then
+    if [ -d fixture ] && [ "$2" != "-f" ]; then
     	skyflowHelperPrintError "fixture directory already exists. Use -f option to continue"
     	exit 1
 	fi
 	[ -d fixture ] && sudo rm -rf fixture
 
 	mkdir -p fixture && cd fixture
-
-    mkdir -p $SKYFLOW_FIXTURE_DIR/data/$1
 
     if [ ! -f $SKYFLOW_FIXTURE_DIR/make/$1.sh ]; then
         skyflowHelperPullFromRemote "component/fixture/make/$1.sh" "$SKYFLOW_FIXTURE_DIR/make/$1.sh"
@@ -55,7 +53,7 @@ function skyflowFixtureGenerate()
 
         read -p "$key [$value] : " newValue
 
-        [ test -z $newValue ] && newValue=$value
+        [ "$newValue" == "" ] && newValue=$value
 
 	    printf "\033[0;92m✓ %s\033[0m\n" "$newValue"
 
@@ -67,17 +65,15 @@ function skyflowFixtureGenerate()
 
     if [ ! -f $SKYFLOW_FIXTURE_DIR/type/$dataType/$1.tpl ]; then
         mkdir -p $SKYFLOW_FIXTURE_DIR/type/$dataType
-        skyflowHelperPullFromRemote "component/fixture/type/$dataType/$1.tpl" "$SKYFLOW_FIXTURE_DIR/type/$dataType/$1.tpl"
+        skyflowHelperPullFromRemote component/fixture/type/$dataType/$1.tpl $SKYFLOW_FIXTURE_DIR/type/$dataType/$1.tpl
     fi
 
     # Copy template to fixture current directory and change its name
     cp $SKYFLOW_FIXTURE_DIR/type/$dataType/$1.tpl $fileName.$dataType
     sed -i "s/{{ file.name }}/$fileName/g" $fileName.$dataType
 
-#    fixtureCurrentDir=$PWD
-
     # Get first file
-    for firstFile in $(ls $SKYFLOW_FIXTURE_DIR/data/$1); do
+    for firstFile in $SKYFLOW_FIXTURE_DIR/data/$1/*.txt; do
         break
     done
 
@@ -85,8 +81,7 @@ function skyflowFixtureGenerate()
     max=$(skyflowHelperCountFileLines $firstFile)
 
     # Return to fixture current directory and write random lines number to $1.id file
-#    cd fixtureCurrentDir
-    [ -f $1.id ] && rm $1.id
+    [ -f $1.id ] && rm $1.id && touch $1.id
 
     for i in {1..$dataNumber}; do
         random=$(skyflowHelperGetRandomNumber $max)
@@ -107,7 +102,7 @@ case $1 in
         skyflowHelperPrintVersion "$versionMessage" "$author"
     ;;
     "generate")
-        skyflowFixtureGenerate "$2"
+        skyflowFixtureGenerate "$2" "$3"
     ;;
     *)
 
