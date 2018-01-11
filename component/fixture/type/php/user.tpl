@@ -8,4 +8,24 @@ class {{ file.name }}
     {
         return {{ data.avatar }};
     }
+
+    public function getUserEmailDataFixture()
+    {
+        return {{ data.email }};
+    }
+
+    public function getUserFirstnameDataFixture()
+    {
+        return {{ data.firstname }};
+    }
+
+    public function getUserLastnameDataFixture()
+    {
+        return {{ data.lastname }};
+    }
+
+    public function getUserPasswordDataFixture()
+    {
+        return {{ data.password }};
+    }
 }

@@ -1,11 +1,36 @@
 <?php
 
-namespace {{ user.namespace }}
+namespace Fixture;
 
-class {{ user.class }}
+class {{ file.name }}
 {
-    public function getUserAvatarDataFixture()
+    public function getCompanyCountryDataFixture()
     {
-        return {{ user.data.avatar }};
+        return {{ data.country }};
+    }
+
+    public function getCompanyDescriptionDataFixture()
+    {
+        return {{ data.description }};
+    }
+
+    public function getCompanyLogoDataFixture()
+    {
+        return {{ data.logo }};
+    }
+
+    public function getCompanyNameDataFixture()
+    {
+        return {{ data.name }};
+    }
+
+    public function getCompanySectorDataFixture()
+    {
+        return {{ data.sector }};
+    }
+
+    public function getCompanyTurnoverDataFixture()
+    {
+        return {{ data.turnover }};
     }
 }

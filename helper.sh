@@ -32,7 +32,7 @@ function skyflowHelperPullFromRemote()
 {
     printf "\033[0;94mPulling\033[0m \033[0;92m%s\033[0m \033[0;94mfrom remote ... \033[0m" "$1"
     curl -s "$SKYFLOW_GITHUB_CONTENT/$1" -o $2
-    [ ! $? -eq 0 ] && skyflowHelperPrintCurlFailedError "$1"
+    [ ! $? -eq 0 ] && skyflowHelperPrintCurlFailedError "\n$1"
     printf "\033[0;92mOk\033[0m\n"
 }
 
@@ -171,7 +171,9 @@ function skyflowHelperGetLineFromFile()
     DONE=false
     until $DONE; do
         read line || DONE=true
-        [ $i -eq $2 ] && break
+        if [ $i -eq $2 ]; then
+            break
+        fi
         ((i++))
     done < $1
 

@@ -5,8 +5,8 @@ if [ "$USER" == "root" ]; then
     exit 1
 fi
 
-#source ./helper.sh
-source $HOME/.skyflow/helper.sh
+source ./helper.sh
+#source $HOME/.skyflow/helper.sh
 
 export SKYFLOW_FIXTURE_VERSION="1.0.0"
 export SKYFLOW_FIXTURE_DIR=$SKYFLOW_DIR/component/fixture
@@ -83,12 +83,46 @@ function skyflowFixtureGenerate()
     # Return to fixture current directory and write random lines number to $1.id file
     [ -f $1.id ] && rm $1.id && touch $1.id
 
-    for i in {1..$dataNumber}; do
+    for i in `seq 1 $dataNumber`; do
         random=$(skyflowHelperGetRandomNumber $max)
-        printf "%s" "$random" > $1.id
+        printf "%s\n" $random >> $1.id
     done
 
+    # Store concat data into tmp directory
+    [ -d $SKYFLOW_FIXTURE_DIR/.tmp ] && rm -rf $SKYFLOW_FIXTURE_DIR/.tmp
+    mkdir -p $SKYFLOW_FIXTURE_DIR/.tmp
 
+    fixtureCurrentDir=$PWD
+    cd $SKYFLOW_FIXTURE_DIR/data/$1
+
+    DONE=false
+    until $DONE; do
+        read id || DONE=true
+
+            if [[ ! $id =~ ^[0-9]+$ ]]; then
+                continue
+            fi
+#
+        for file in *.txt; do
+            field=`expr match "$file" "\([^\.]*\)\.txt"`
+            [ ! -f $SKYFLOW_FIXTURE_DIR/.tmp/$field ] && touch $SKYFLOW_FIXTURE_DIR/.tmp/$field
+            line=$(skyflowHelperGetLineFromFile $file $id)
+            printf "\"%s\"," "$line" >> $SKYFLOW_FIXTURE_DIR/.tmp/$field
+        done
+
+    done < $fixtureCurrentDir/$1.id
+
+    cd $SKYFLOW_FIXTURE_DIR/.tmp
+    for field in *; do
+        content=$(cat $field)
+        sed -i "s/{{ *data\.$field *}}/[$content]/g" $fixtureCurrentDir/$fileName.$dataType
+    done
+
+    sed -i "s/,]/]/g" $fixtureCurrentDir/$fileName.$dataType
+
+    rm -rf $SKYFLOW_FIXTURE_DIR/.tmp
+
+    skyflowHelperPrintSuccess "$fileName.$dataType was created in /fixture directory"
 }
 
 
