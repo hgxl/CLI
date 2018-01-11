@@ -1,5 +1,0 @@
-avatar
-email
-firstname
-lastname
-password

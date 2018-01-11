@@ -5,50 +5,109 @@ if [ "$USER" == "root" ]; then
     exit 1
 fi
 
-source ./helper.sh
-#source $HOME/.skyflow/helper.sh
+#source ./helper.sh
+source $HOME/.skyflow/helper.sh
 
-#source ./component/docker/helper.sh
-#source $HOME/.skyflow/component/docker/helper.sh
+export SKYFLOW_FIXTURE_VERSION="1.0.0"
+export SKYFLOW_FIXTURE_DIR=$SKYFLOW_DIR/component/fixture
 
-#author="Skyflow Team - Franck Diomandé <fkdiomande@gmail.com>"
-#versionMessage="Skyflow Docker CLI version $SKYFLOW_DOCKER_VERSION"
-#docFile="$SKYFLOW_DIR/component/docker/docker.sdoc"
+author="Skyflow Team - Franck Diomandé <fkdiomande@gmail.com>"
+versionMessage="Skyflow Fixture CLI version $SKYFLOW_FIXTURE_VERSION"
+docFile="$SKYFLOW_FIXTURE_DIR/fixture.sdoc"
 
-#CWD=$PWD
-
-function skyflowFixtureList()
+function skyflowFixtureGenerate()
 {
-    count=0;
-    printf "\n\033[0;96mSkyflow Fixture CLI:\033[0m\n"
-    start=1
-    end=25
-    for ((i=$start; i<=$end; i++)); do printf "\033[0;96m-\033[0m"; done
-    printf "\n"
+    if ! grep -Fxq "$1" $SKYFLOW_FIXTURE_DIR/fixture.ls; then
+        skyflowHelperPrintError "$1 component not found"
+    	exit 1
+    fi
+
+    if [ -d fixture ] && [ "$1" != "-f" ]; then
+    	skyflowHelperPrintError "fixture directory already exists. Use -f option to continue"
+    	exit 1
+	fi
+	[ -d fixture ] && sudo rm -rf fixture
+
+	mkdir -p fixture && cd fixture
+	fixtureCurrentDir=$PWD
+
+    mkdir -p $SKYFLOW_FIXTURE_DIR/data/$1
+
+    if [ ! -f $SKYFLOW_FIXTURE_DIR/make/$1.sh ]; then
+        skyflowHelperPullFromRemote "component/fixture/make/$1.sh" "$SKYFLOW_FIXTURE_DIR/make/$1.sh"
+        sudo chmod +x $SKYFLOW_FIXTURE_DIR/make/$1.sh
+    fi
+    # Create directories and get files for selected fixture
+    [ ! -d $SKYFLOW_FIXTURE_DIR/data/$1 ] && $SKYFLOW_FIXTURE_DIR/make/$1.sh
 
     DONE=false
     until $DONE; do
-        read fixture || DONE=true
+        read -u3 line || DONE=true
 
-        count=$((count + 1))
-        printf "%s - \033[0;35m%s\033[0m\n" "$count" "$fixture"
+        # First char
+        firstchar=${line:0:1}
 
-    done < $SKYFLOW_DIR/component/fixture/fixtures.txt
+        if [ "$firstchar" == "[" ] || [ "$firstchar" == ";" ]; then
+            continue
+        fi
 
-    printf "\n"
+        key=`expr match "$line" "\([^ ]*\) *= .*"`
+        value=`expr match "$line" "$key *= *\(.*\)"`
+
+        read -p "$key [$value] : " newValue
+
+        [ test -z $newValue ] && newValue=$value
+
+	    printf "\033[0;92m✓ %s\033[0m\n" "$newValue"
+
+        [ "$key" == "number" ] && dataNumber=$newValue
+        [ "$key" == "data.type" ] && dataType=$newValue
+        [ "$key" == "file.name" ] && fileName=$newValue
+
+    done 3< $SKYFLOW_FIXTURE_DIR/fixture.ini
+
+    if [ ! -f $SKYFLOW_FIXTURE_DIR/type/$dataType/$1.tpl ]; then
+        mkdir -p $SKYFLOW_FIXTURE_DIR/type/$dataType
+        skyflowHelperPullFromRemote "component/fixture/type/$dataType/$1.tpl" "$SKYFLOW_FIXTURE_DIR/type/$dataType/$1.tpl"
+    fi
+
+    cp $SKYFLOW_FIXTURE_DIR/type/$dataType/$1.tpl $fileName.$dataType
+
+    sed -i "s/{{ file.name }}/$fileName/g" $fileName.$dataType
+
+    # Get first file
+    cd $SKYFLOW_FIXTURE_DIR/data/$1
+    for firstFile in $(ls); do
+        break
+    done
+
+    # Count lines in first file
+    max=$(skyflowHelperCountFileLines $firstFile)
+
+    # Return to fixture current directory and write random lines number to $1.id file
+    cd fixtureCurrentDir
+    [ -f $1.id ] && rm $1.id
+
+    for i in {1..$dataNumber}; do
+        random=$(skyflowHelperGetRandomNumber $max)
+        printf "%s" "$random" > $1.id
+    done
+
+
 }
+
 
 # =======================================
 
 case $1 in
     "-h"|"--help")
-#        skyflowHelperPrintHelp "Skyflow Docker CLI" "$author" "$docFile"
+        skyflowHelperPrintHelp "Skyflow Fixture CLI" "$author" "$docFile"
     ;;
     "-v"|"--version")
-#        skyflowHelperPrintVersion "$versionMessage" "$author"
+        skyflowHelperPrintVersion "$versionMessage" "$author"
     ;;
-    "list")
-        skyflowFixtureList
+    "generate")
+        skyflowFixtureGenerate "$2"
     ;;
     *)
 

@@ -8,4 +8,4 @@
             - ./conf/php:/etc/php{{ version }}
             - ./extra/php:/usr/lib/php{{ version }}
         ports:
-            {{ port }}:9000
+            - {{ port }}:9000
