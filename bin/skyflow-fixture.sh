@@ -18,20 +18,17 @@ docFile="$SKYFLOW_FIXTURE_DIR/fixture.sdoc"
 function skyflowFixtureGenerate()
 {
     if ! grep -Fxq "$1" $SKYFLOW_FIXTURE_DIR/fixture.ls; then
-        skyflowHelperPrintError "$1 component not found"
+        skyflowHelperPrintError "$1 fixture not found"
     	exit 1
     fi
 
-    if [ -d fixture ] && [ "$1" != "-f" ]; then
+    if [ -d fixture ] && [ "$2" != "-f" ]; then
     	skyflowHelperPrintError "fixture directory already exists. Use -f option to continue"
     	exit 1
 	fi
 	[ -d fixture ] && sudo rm -rf fixture
 
 	mkdir -p fixture && cd fixture
-	fixtureCurrentDir=$PWD
-
-    mkdir -p $SKYFLOW_FIXTURE_DIR/data/$1
 
     if [ ! -f $SKYFLOW_FIXTURE_DIR/make/$1.sh ]; then
         skyflowHelperPullFromRemote "component/fixture/make/$1.sh" "$SKYFLOW_FIXTURE_DIR/make/$1.sh"
@@ -56,7 +53,7 @@ function skyflowFixtureGenerate()
 
         read -p "$key [$value] : " newValue
 
-        [ test -z $newValue ] && newValue=$value
+        [ "$newValue" == "" ] && newValue=$value
 
 	    printf "\033[0;92m✓ %s\033[0m\n" "$newValue"
 
@@ -68,16 +65,15 @@ function skyflowFixtureGenerate()
 
     if [ ! -f $SKYFLOW_FIXTURE_DIR/type/$dataType/$1.tpl ]; then
         mkdir -p $SKYFLOW_FIXTURE_DIR/type/$dataType
-        skyflowHelperPullFromRemote "component/fixture/type/$dataType/$1.tpl" "$SKYFLOW_FIXTURE_DIR/type/$dataType/$1.tpl"
+        skyflowHelperPullFromRemote component/fixture/type/$dataType/$1.tpl $SKYFLOW_FIXTURE_DIR/type/$dataType/$1.tpl
     fi
 
+    # Copy template to fixture current directory and change its name
     cp $SKYFLOW_FIXTURE_DIR/type/$dataType/$1.tpl $fileName.$dataType
-
     sed -i "s/{{ file.name }}/$fileName/g" $fileName.$dataType
 
     # Get first file
-    cd $SKYFLOW_FIXTURE_DIR/data/$1
-    for firstFile in $(ls); do
+    for firstFile in $SKYFLOW_FIXTURE_DIR/data/$1/*.txt; do
         break
     done
 
@@ -85,15 +81,48 @@ function skyflowFixtureGenerate()
     max=$(skyflowHelperCountFileLines $firstFile)
 
     # Return to fixture current directory and write random lines number to $1.id file
-    cd fixtureCurrentDir
-    [ -f $1.id ] && rm $1.id
+    [ -f $1.id ] && rm $1.id && touch $1.id
 
-    for i in {1..$dataNumber}; do
+    for i in `seq 1 $dataNumber`; do
         random=$(skyflowHelperGetRandomNumber $max)
-        printf "%s" "$random" > $1.id
+        printf "%s\n" $random >> $1.id
     done
 
+    # Store concat data into tmp directory
+    [ -d $SKYFLOW_FIXTURE_DIR/.tmp ] && rm -rf $SKYFLOW_FIXTURE_DIR/.tmp
+    mkdir -p $SKYFLOW_FIXTURE_DIR/.tmp
 
+    fixtureCurrentDir=$PWD
+    cd $SKYFLOW_FIXTURE_DIR/data/$1
+
+    DONE=false
+    until $DONE; do
+        read id || DONE=true
+
+            if [[ ! $id =~ ^[0-9]+$ ]]; then
+                continue
+            fi
+#
+        for file in *.txt; do
+            field=`expr match "$file" "\([^\.]*\)\.txt"`
+            [ ! -f $SKYFLOW_FIXTURE_DIR/.tmp/$field ] && touch $SKYFLOW_FIXTURE_DIR/.tmp/$field
+            line=$(skyflowHelperGetLineFromFile $file $id)
+            printf "\"%s\"," "$line" >> $SKYFLOW_FIXTURE_DIR/.tmp/$field
+        done
+
+    done < $fixtureCurrentDir/$1.id
+
+    cd $SKYFLOW_FIXTURE_DIR/.tmp
+    for field in *; do
+        content=$(cat $field)
+        sed -i "s/{{ *data\.$field *}}/[$content]/g" $fixtureCurrentDir/$fileName.$dataType
+    done
+
+    sed -i "s/,]/]/g" $fixtureCurrentDir/$fileName.$dataType
+
+    rm -rf $SKYFLOW_FIXTURE_DIR/.tmp
+
+    skyflowHelperPrintSuccess "$fileName.$dataType was created in /fixture directory"
 }
 
 
@@ -107,7 +136,7 @@ case $1 in
         skyflowHelperPrintVersion "$versionMessage" "$author"
     ;;
     "generate")
-        skyflowFixtureGenerate "$2"
+        skyflowFixtureGenerate "$2" "$3"
     ;;
     *)
 
