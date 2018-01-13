@@ -22,12 +22,6 @@ function skyflowFixtureGenerate()
     	exit 1
     fi
 
-    if [ -d fixture ] && [ "$2" != "-f" ]; then
-    	skyflowHelperPrintError "fixture directory already exists. Use -f option to continue"
-    	exit 1
-	fi
-	[ -d fixture ] && sudo rm -rf fixture
-
 	mkdir -p fixture && cd fixture
 
     if [ ! -f $SKYFLOW_FIXTURE_DIR/make/$1.sh ]; then
@@ -136,7 +130,7 @@ case $1 in
         skyflowHelperPrintVersion "$versionMessage" "$author"
     ;;
     "generate")
-        skyflowFixtureGenerate "$2" "$3"
+        skyflowFixtureGenerate "$2"
     ;;
     *)
 
