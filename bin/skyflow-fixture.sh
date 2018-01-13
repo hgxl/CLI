@@ -64,7 +64,7 @@ function skyflowFixtureGenerate()
 
     # Copy template to fixture current directory and change its name
     cp $SKYFLOW_FIXTURE_DIR/type/$dataType/$1.tpl $fileName.$dataType
-    sed -i 's/{{ file.name }}/'$fileName'/g' $fileName.$dataType
+    sed -i 's/{{ file.name }}/'$fileName'/g' "$fileName.$dataType"
 
     # Get first file
     for firstFile in $SKYFLOW_FIXTURE_DIR/data/$1/*.txt; do
@@ -96,7 +96,7 @@ function skyflowFixtureGenerate()
             if [[ ! $id =~ ^[0-9]+$ ]]; then
                 continue
             fi
-#
+
         for file in *.txt; do
             field=`expr match "$file" "\([^\.]*\)\.txt"`
             [ ! -f $SKYFLOW_FIXTURE_DIR/.tmp/$field ] && touch $SKYFLOW_FIXTURE_DIR/.tmp/$field
@@ -109,10 +109,10 @@ function skyflowFixtureGenerate()
     cd $SKYFLOW_FIXTURE_DIR/.tmp
     for field in *; do
         content=$(cat $field)
-        sed -i 's/{{ data.'$field' }}/['$content']/g' $fixtureCurrentDir/$fileName.$dataType
+        sed -i 's/{{ data.'$field' }}/['$content']/g' "$fixtureCurrentDir/$fileName.$dataType"
     done
 
-    sed -i 's/,]/]/g' $fixtureCurrentDir/$fileName.$dataType
+    sed -i 's/,]/]/g' "$fixtureCurrentDir/$fileName.$dataType"
 
     rm -rf $SKYFLOW_FIXTURE_DIR/.tmp
 
@@ -141,14 +141,14 @@ case $1 in
     "-v"|"--version")
         skyflowHelperPrintVersion "$versionMessage" "$author"
     ;;
-    "generate")
+    "generate"|"install"|"create")
         skyflowFixtureGenerate "$2"
     ;;
     "update")
         skyflowFixtureUpdate "$2"
     ;;
     *)
-        skyflowHelperPrintError "$2 command not found"
+        skyflowHelperPrintError "$1 command not found"
     ;;
 esac
 
