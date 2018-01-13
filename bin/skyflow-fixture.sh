@@ -148,7 +148,7 @@ case $1 in
         skyflowFixtureUpdate "$2"
     ;;
     *)
-
+        skyflowHelperPrintError "$2 command not found"
     ;;
 esac
 
