@@ -119,6 +119,18 @@ function skyflowFixtureGenerate()
     skyflowHelperPrintSuccess "$fileName.$dataType was created in /fixture directory"
 }
 
+function skyflowFixtureUpdate()
+{
+    if [ ! -f $SKYFLOW_FIXTURE_DIR/make/$1.sh ]; then
+        mkdir -p $SKYFLOW_FIXTURE_DIR/make
+        skyflowHelperPullFromRemote "component/fixture/make/$1.sh" "$SKYFLOW_FIXTURE_DIR/make/$1.sh"
+        sudo chmod +x $SKYFLOW_FIXTURE_DIR/make/$1.sh
+    fi
+    # Create directories and get files for selected fixture
+    [ -d $SKYFLOW_FIXTURE_DIR/data/$1 ] && rm -rf $SKYFLOW_FIXTURE_DIR/data/$1
+    $SKYFLOW_FIXTURE_DIR/make/$1.sh
+}
+
 
 # =======================================
 
@@ -131,6 +143,9 @@ case $1 in
     ;;
     "generate")
         skyflowFixtureGenerate "$2"
+    ;;
+    "update")
+        skyflowFixtureUpdate "$2"
     ;;
     *)
 

@@ -4,3 +4,4 @@
 -v                              Short option for displaying skyflow docker CLI version.
 --version                       Long option for displaying skyflow docker CLI version.
 generate <name>                 Generate some fixtures.
+update <name>                   Update some fixtures.
