@@ -70,7 +70,7 @@ function skyflowFixtureGenerate()
 
     # Copy template to fixture current directory and change its name
     cp $SKYFLOW_FIXTURE_DIR/type/$dataType/$1.tpl $fileName.$dataType
-    sed -i "s/{{ file.name }}/$fileName/g" $fileName.$dataType
+    sed -i 's/{{ file.name }}/'$fileName'/g' $fileName.$dataType
 
     # Get first file
     for firstFile in $SKYFLOW_FIXTURE_DIR/data/$1/*.txt; do
@@ -115,10 +115,10 @@ function skyflowFixtureGenerate()
     cd $SKYFLOW_FIXTURE_DIR/.tmp
     for field in *; do
         content=$(cat $field)
-        sed -i "s/{{ *data\.$field *}}/[$content]/g" $fixtureCurrentDir/$fileName.$dataType
+        sed -i 's/{{ data.'$field' }}/['$content']/g' $fixtureCurrentDir/$fileName.$dataType
     done
 
-    sed -i "s/,]/]/g" $fixtureCurrentDir/$fileName.$dataType
+    sed -i 's/,]/]/g' $fixtureCurrentDir/$fileName.$dataType
 
     rm -rf $SKYFLOW_FIXTURE_DIR/.tmp
 
