@@ -3,8 +3,8 @@
 export SKYFLOW_DIR=$HOME/.skyflow
 export SKYFLOW_CACHE_DIR=$SKYFLOW_DIR/.cache
 export SKYFLOW_VERSION="1.0.0"
-export SKYFLOW_GITHUB_URL="https://github.com/franckdiomande/Skyflow-cli.git"
-export SKYFLOW_GITHUB_CONTENT="https://raw.githubusercontent.com/franckdiomande/Skyflow-cli/master"
+export SKYFLOW_GITHUB_URL="https://github.com/skyflow-io/CLI.git"
+export SKYFLOW_GITHUB_CONTENT="https://raw.githubusercontent.com/skyflow-io/CLI/master"
 
 # Print skyflow formatted error message
 # Arguments:

@@ -6,7 +6,7 @@ if [ "$USER" == "root" ]; then
 fi
 
 export SKYFLOW_DIR=$HOME/.skyflow
-export SKYFLOW_GITHUB_CONTENT="https://raw.githubusercontent.com/franckdiomande/Skyflow-cli/master"
+export SKYFLOW_GITHUB_CONTENT="https://raw.githubusercontent.com/skyflow-io/CLI/master"
 
 # ===========>>>>>>>>>>>>>>> Local helper
 

@@ -16,7 +16,7 @@ Installation
 ###### _With curl_
 
 ```bash
-sudo curl -s https://raw.githubusercontent.com/franckdiomande/Skyflow-cli/master/skyflow.sh -o /usr/local/bin/skyflow
+sudo curl -s https://raw.githubusercontent.com/skyflow-io/CLI/master/skyflow.sh -o /usr/local/bin/skyflow
 ```
 
 ```bash
@@ -116,5 +116,5 @@ Use `source $HOME/.skyflow/helper.sh` to import all functions.
 The **`skyflow.sh`** file is the skyflow command line.
 
 [1]: http://hub.skyflow.io:8080
-[2]: https://raw.githubusercontent.com/franckdiomande/Skyflow-cli/master/skyflow.sh
-[3]: https://github.com/franckdiomande/Skyflow-cli/blob/master/component/docker/README.md
+[2]: https://raw.githubusercontent.com/skyflow-io/CLI/master/skyflow.sh
+[3]: https://github.com/skyflow-io/CLI/blob/master/component/docker/README.md
