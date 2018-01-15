@@ -6,7 +6,7 @@ source $HOME/.skyflow/helper.sh
 #source ././../../helper.sh
 source $HOME/.skyflow/component/docker/helper.sh
 
-function skyflowDockerOnContainerInit()
+function skyflowDockerOnContainerInit
 {
     local container=empty
 
@@ -17,12 +17,12 @@ function skyflowDockerOnContainerInit()
 
 }
 
-function skyflowDockerOnContainerProgress()
+function skyflowDockerOnContainerProgress
 {
     printf "%s" "$2"
 }
 
-function skyflowDockerOnContainerFinish()
+function skyflowDockerOnContainerFinish
 {
     skyflowHelperPrintInfo "You have created an empty container. Use the 'skyflow-docker use <compose_name>' command to add containers"
 }

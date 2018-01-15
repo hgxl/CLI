@@ -6,7 +6,7 @@ source $HOME/.skyflow/helper.sh
 export SKYFLOW_DOCKER_VERSION="1.0.0"
 export SKYFLOW_DOCKER_DIR=$SKYFLOW_DIR/component/docker
 
-function findDockerComposeFile()
+function findDockerComposeFile
 {
         if [ -d docker ] && [ ! -f docker-compose.yml ]; then
             cd docker
@@ -22,7 +22,7 @@ function findDockerComposeFile()
 # - create document root directory
 # - create directory index file
 # - add server name to /etc/hosts file
-function dockerHelperOnContainerFinish()
+function dockerHelperOnContainerFinish
 {
     local applicationName=$(skyflowHelperGetFromIni "docker.ini" "application.name")
     local serverName=$(skyflowHelperGetFromIni "docker.ini" "server.name")
@@ -54,7 +54,7 @@ function dockerHelperOnContainerFinish()
     printf "\033[0;94mAfter 'skyflow-docker up' command, go to \033[4;94m%s:%s\033[0m" "$serverName" "$containerPort"
 }
 
-function skyflowDockerPullConfAndExtraConf()
+function skyflowDockerPullConfAndExtraConf
 {
     for element in conf extra; do
 

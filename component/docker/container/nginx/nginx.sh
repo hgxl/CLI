@@ -6,7 +6,7 @@ source $HOME/.skyflow/helper.sh
 #source ././../../helper.sh
 source $HOME/.skyflow/component/docker/helper.sh
 
-function skyflowDockerOnContainerInit()
+function skyflowDockerOnContainerInit
 {
     local container=nginx
 
@@ -30,7 +30,7 @@ function skyflowDockerOnContainerInit()
 
 }
 
-function skyflowDockerOnContainerProgress()
+function skyflowDockerOnContainerProgress
 {
     local container=nginx
 
@@ -48,7 +48,7 @@ function skyflowDockerOnContainerProgress()
     printf "%s" "$value"
 }
 
-function skyflowDockerOnContainerFinish()
+function skyflowDockerOnContainerFinish
 {
     dockerHelperOnContainerFinish
 }

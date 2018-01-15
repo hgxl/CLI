@@ -4,32 +4,32 @@ namespace Fixture;
 
 class {{ file.name }}
 {
-    public function getCompanyCountryDataFixture()
+    public function getCompanyCountryDataFixture
     {
         return {{ data.country }};
     }
 
-    public function getCompanyDescriptionDataFixture()
+    public function getCompanyDescriptionDataFixture
     {
         return {{ data.description }};
     }
 
-    public function getCompanyLogoDataFixture()
+    public function getCompanyLogoDataFixture
     {
         return {{ data.logo }};
     }
 
-    public function getCompanyNameDataFixture()
+    public function getCompanyNameDataFixture
     {
         return {{ data.name }};
     }
 
-    public function getCompanySectorDataFixture()
+    public function getCompanySectorDataFixture
     {
         return {{ data.sector }};
     }
 
-    public function getCompanyTurnoverDataFixture()
+    public function getCompanyTurnoverDataFixture
     {
         return {{ data.turnover }};
     }

@@ -15,7 +15,7 @@ author="Skyflow Team - Franck Diomandé <fkdiomande@gmail.com>"
 versionMessage="Skyflow Fixture CLI version $SKYFLOW_FIXTURE_VERSION"
 docFile="$SKYFLOW_FIXTURE_DIR/fixture.sdoc"
 
-function skyflowFixtureGenerate()
+function skyflowFixtureGenerate
 {
     if ! grep -Fxq "$1" $SKYFLOW_FIXTURE_DIR/fixture.ls; then
         skyflowHelperPrintError "$1 fixture not found"
@@ -119,7 +119,7 @@ function skyflowFixtureGenerate()
     skyflowHelperPrintSuccess "$fileName.$dataType was created in /fixture directory"
 }
 
-function skyflowFixtureUpdate()
+function skyflowFixtureUpdate
 {
     if [ ! -f $SKYFLOW_FIXTURE_DIR/make/$1.sh ]; then
         mkdir -p $SKYFLOW_FIXTURE_DIR/make

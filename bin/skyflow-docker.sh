@@ -19,7 +19,7 @@ playbook=1
 # Todo: Create new group and add current user and apache and docker
 # Todo: Can not access to application by localhost for apache2
 
-function skyflowDockerInit()
+function skyflowDockerInit
 {
     if [ -d docker ] && [ "$1" != "-f" ]; then
     	skyflowHelperPrintError "docker directory already exists. Use -f option to continue"
@@ -106,13 +106,13 @@ function skyflowDockerInit()
     skyflowHelperPrintSuccess "Your docker environment is ready! Run 'skyflow-docker up' command to up your environment"
 }
 
-function skyflowDockerUp()
+function skyflowDockerUp
 {
     findDockerComposeFile
     docker-compose up --build -d
 }
 
-function skyflowDockerLs()
+function skyflowDockerLs
 {
     # Trim : Remove last 's' char
     input=$1
@@ -149,7 +149,7 @@ function skyflowDockerLs()
     esac
 }
 
-function skyflowDockerRm()
+function skyflowDockerRm
 {
     case $1 in
 
@@ -173,19 +173,19 @@ function skyflowDockerRm()
 
 }
 
-function skyflowDockerStop()
+function skyflowDockerStop
 {
     [ "$1" == "-a" ] && skyflowHelperRunCommand "docker stop $(docker ps -aq)"
     findDockerComposeFile
     [ "$1" != "-a" ] && skyflowHelperRunCommand "docker-compose stop"
 }
 
-function skyflowDockerPrune()
+function skyflowDockerPrune
 {
     skyflowHelperRunCommand "docker system prune -a"
 }
 
-function skyflowDockerUseCompose()
+function skyflowDockerUseCompose
 {
     local compose=$1
 
@@ -252,7 +252,7 @@ function skyflowDockerUseCompose()
     
 }
 
-function skyflowExecContainer()
+function skyflowExecContainer
 {
     local container=`expr match "$1" "\([^:]*\):[a-z0-9_-]*"`
     local command=`expr match "$1" "[^:]*:\(.*\)"`
@@ -307,7 +307,7 @@ function skyflowExecContainer()
     fi
 }
 
-function skyflowPlaybook()
+function skyflowPlaybook
 {
     findDockerComposeFile
 

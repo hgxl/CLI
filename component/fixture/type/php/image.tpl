@@ -4,12 +4,12 @@ namespace Fixture;
 
 class {{ file.name }}
 {
-    public function getImageNameDataFixture()
+    public function getImageNameDataFixture
     {
         return {{ data.name }};
     }
 
-    public function getImagePathDataFixture()
+    public function getImagePathDataFixture
     {
         return {{ data.path }};
     }

@@ -13,7 +13,7 @@ export SKYFLOW_GITHUB_CONTENT="https://raw.githubusercontent.com/skyflow-io/CLI/
 # Print skyflow curl failed formatted error message
 # Arguments:
 # - $1 : Message
-function skyflowHelperPrintCurlFailedError()
+function skyflowHelperPrintCurlFailedError
 {
     echo -e "\033[0;31mSkyflow error: Can not find the file '$1'.\033[0m"
     echo -e "\033[0;31mPlease check your internet connection and that the file exists.\033[0m"
@@ -24,7 +24,7 @@ function skyflowHelperPrintCurlFailedError()
 # Arguments:
 # - $1 : Resource path
 # - $2 : Output directory
-function skyflowLocalHelperPullFromRemote()
+function skyflowLocalHelperPullFromRemote
 {
     printf "\033[0;94mPulling\033[0m \033[0;92m%s\033[0m \033[0;94mfrom remote ... \033[0m" "$1"
     curl -s "$SKYFLOW_GITHUB_CONTENT/$1" -o $2
@@ -34,7 +34,7 @@ function skyflowLocalHelperPullFromRemote()
 
 # End local helper <<<<<<<<<<<===============
 
-function skyflowInit()
+function skyflowInit
 {
     case $1 in
         "-f")
@@ -63,7 +63,7 @@ author="Skyflow Team - Franck Diomandé <fkdiomande@gmail.com>"
 versionMessage="Skyflow CLI version $SKYFLOW_VERSION"
 docFile="$SKYFLOW_DIR/skyflow.sdoc"
 
-function skyflowInstall()
+function skyflowInstall
 {
 	if ! grep -Fxq "$1" $SKYFLOW_DIR/component.ls; then
         skyflowHelperPrintError "$1 component not found"
@@ -93,7 +93,7 @@ function skyflowInstall()
     exit 0
 }
 
-function skyflowRemove()
+function skyflowRemove
 {
     # Check if component exists
     if ! grep -Fxq "$1" $SKYFLOW_DIR/component.ls; then
@@ -113,7 +113,7 @@ function skyflowRemove()
     exit 0
 }
 
-function skyflowList()
+function skyflowList
 {
     count=0;
     printf "\n\033[0;96mSkyflow CLI components:\033[0m\n"

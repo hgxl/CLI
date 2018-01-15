@@ -6,7 +6,7 @@ source $HOME/.skyflow/helper.sh
 #source ././../../helper.sh
 source $HOME/.skyflow/component/docker/helper.sh
 
-function skyflowDockerOnContainerInit()
+function skyflowDockerOnContainerInit
 {
     local container=apache2
 
@@ -58,7 +58,7 @@ function skyflowDockerOnContainerInit()
 
 }
 
-function skyflowDockerOnContainerProgress()
+function skyflowDockerOnContainerProgress
 {
     if [ "$1" == "application.name" ]; then
         # Lower upper
@@ -69,7 +69,7 @@ function skyflowDockerOnContainerProgress()
     printf "%s" "$2"
 }
 
-function skyflowDockerOnContainerFinish()
+function skyflowDockerOnContainerFinish
 {
     dockerHelperOnContainerFinish
 }

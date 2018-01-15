@@ -4,27 +4,27 @@ namespace Fixture;
 
 class {{ file.name }}
 {
-    public function getUserAvatarDataFixture()
+    public function getUserAvatarDataFixture
     {
         return {{ data.avatar }};
     }
 
-    public function getUserEmailDataFixture()
+    public function getUserEmailDataFixture
     {
         return {{ data.email }};
     }
 
-    public function getUserFirstnameDataFixture()
+    public function getUserFirstnameDataFixture
     {
         return {{ data.firstname }};
     }
 
-    public function getUserLastnameDataFixture()
+    public function getUserLastnameDataFixture
     {
         return {{ data.lastname }};
     }
 
-    public function getUserPasswordDataFixture()
+    public function getUserPasswordDataFixture
     {
         return {{ data.password }};
     }

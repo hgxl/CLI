@@ -9,7 +9,7 @@ export SKYFLOW_GITHUB_CONTENT="https://raw.githubusercontent.com/skyflow-io/CLI/
 # Print skyflow formatted error message
 # Arguments:
 # - $1 : Message
-function skyflowHelperPrintError()
+function skyflowHelperPrintError
 {
     echo -e "\033[0;31mSkyflow error: $1\033[0m"
 }
@@ -17,7 +17,7 @@ function skyflowHelperPrintError()
 # Print skyflow curl failed formatted error message
 # Arguments:
 # - $1 : Message
-function skyflowHelperPrintCurlFailedError()
+function skyflowHelperPrintCurlFailedError
 {
     echo -e "\033[0;31mSkyflow error: Can not find the file '$1'.\033[0m"
     echo -e "\033[0;31mPlease check your internet connection and that the file exists.\033[0m"
@@ -28,7 +28,7 @@ function skyflowHelperPrintCurlFailedError()
 # Arguments:
 # - $1 : Resource path
 # - $2 : Output directory
-function skyflowHelperPullFromRemote()
+function skyflowHelperPullFromRemote
 {
     printf "\033[0;94mPulling\033[0m \033[0;92m%s\033[0m \033[0;94mfrom remote ... \033[0m" "$1"
     curl -s "$SKYFLOW_GITHUB_CONTENT/$1" -o $2
@@ -39,7 +39,7 @@ function skyflowHelperPullFromRemote()
 # Print skyflow formatted success message
 # Arguments:
 # - $1 : Message
-function skyflowHelperPrintSuccess()
+function skyflowHelperPrintSuccess
 {
     echo -e "\033[0;92m✓ $1\033[0m"
 }
@@ -47,7 +47,7 @@ function skyflowHelperPrintSuccess()
 # Print skyflow formatted info message
 # Arguments:
 # - $1 : Message
-function skyflowHelperPrintInfo()
+function skyflowHelperPrintInfo
 {
     echo -e "\033[0;94m$1\033[0m"
 }
@@ -56,7 +56,7 @@ function skyflowHelperPrintInfo()
 # Arguments:
 # - $1 : string
 # - $2 : List of chars
-function skyflowHelperTrim()
+function skyflowHelperTrim
 {
     string="$1"
     chars="$2"
@@ -71,7 +71,7 @@ function skyflowHelperTrim()
 # Arguments:
 # - $1 : Ini file
 # - $2 : Key
-function skyflowHelperGetFromIni()
+function skyflowHelperGetFromIni
 {
     content=$(cat $1)
     value=`expr match "$content" ".*$2 *= *\([a-zA-Z0-9_@\.-'\"]*\)"`
@@ -84,7 +84,7 @@ function skyflowHelperGetFromIni()
 # - $1 : Title
 # - $2 : Author
 # - $3 : File to use ({component}.sdoc)
-function skyflowHelperPrintHelp()
+function skyflowHelperPrintHelp
 {
     printf "\n\033[0;96m%s\033[0m\033[0;37m - %s\033[0m\n" "$1" "$2"
 
@@ -116,7 +116,7 @@ function skyflowHelperPrintHelp()
 # Arguments:
 # - $1 : Title
 # - $2 : Author
-function skyflowHelperPrintVersion()
+function skyflowHelperPrintVersion
 {
     printf "\033[0;96m%s\033[0m\n" "$1"
     printf "\033[0;37m%s\033[0m\n" "$2"
@@ -125,7 +125,7 @@ function skyflowHelperPrintVersion()
 # Run command
 # Arguments:
 # - $1 : Command
-function skyflowHelperRunCommand()
+function skyflowHelperRunCommand
 {
     sudo $1
 
@@ -141,7 +141,7 @@ function skyflowHelperRunCommand()
 # Count lines into file
 # Arguments:
 # - $1 : File
-function skyflowHelperCountFileLines()
+function skyflowHelperCountFileLines
 {
     lc=0
     while read -r line; do
@@ -153,7 +153,7 @@ function skyflowHelperCountFileLines()
 # Get random number between 1 and $1
 # Arguments:
 # - $1 : Max number
-function skyflowHelperGetRandomNumber()
+function skyflowHelperGetRandomNumber
 {
     rnd=$RANDOM
     let "rnd %= $1"
@@ -165,7 +165,7 @@ function skyflowHelperGetRandomNumber()
 # Arguments:
 # - $1 : File
 # - $2 : Number of line
-function skyflowHelperGetLineFromFile()
+function skyflowHelperGetLineFromFile
 {
     i=1
     DONE=false
@@ -183,7 +183,7 @@ function skyflowHelperGetLineFromFile()
 # Get random line from file
 # Arguments:
 # - $1 : File
-function skyflowHelperGetRandomLineFromFile()
+function skyflowHelperGetRandomLineFromFile
 {
     n=$(skyflowHelperCountFileLines $1);
     n=$(skyflowHelperGetRandomNumber $n);
