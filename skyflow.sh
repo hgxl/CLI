@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 if [ "$USER" == "root" ]; then
     printf "\033[0;31mSkyflow error: Run without 'root' user.\033[0m"

@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 source $HOME/.skyflow/helper.sh
 source $SKYFLOW_DIR/component/docker/helper.sh

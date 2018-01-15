@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 source $HOME/.skyflow/helper.sh
 export SKYFLOW_FIXTURE_DIR=$SKYFLOW_DIR/component/fixture

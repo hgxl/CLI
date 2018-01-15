@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 export SKYFLOW_DIR=$HOME/.skyflow
 export SKYFLOW_CACHE_DIR=$SKYFLOW_DIR/.cache

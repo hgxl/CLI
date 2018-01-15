@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 source $HOME/.skyflow/helper.sh
 skyflowHelperPullFromRemote "component/docker/helper.sh" $SKYFLOW_DIR/component/docker/helper.sh
